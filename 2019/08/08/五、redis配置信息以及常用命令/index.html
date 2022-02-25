@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.0.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.10.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
+
+  <meta name="description" content="前言本来不打算写这篇的，因为网上有很多这种的，最后想想，既然打算做一个redis系列，还是把这一篇补上，刚好这段时间有个同事做了一个redis的基础培训，整理的很好，就拿来借用一下，但是我们实际开发中其实用不了那么多，我们对这些配置和命令有个大概的了解就行，也不用死记硬背的把每个命令和配置记住，当然诸位如果能记住那就更好啦。关于redis的介绍就不多说了，持久化，速度快，单线程，基于内存。 配置文">
+<meta property="og:type" content="website">
+<meta property="og:title" content="五、redis配置信息以及常用命令">
+<meta property="og:url" content="http://example.com/2019/08/08/%E4%BA%94%E3%80%81redis%E9%85%8D%E7%BD%AE%E4%BF%A1%E6%81%AF%E4%BB%A5%E5%8F%8A%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="前言本来不打算写这篇的，因为网上有很多这种的，最后想想，既然打算做一个redis系列，还是把这一篇补上，刚好这段时间有个同事做了一个redis的基础培训，整理的很好，就拿来借用一下，但是我们实际开发中其实用不了那么多，我们对这些配置和命令有个大概的了解就行，也不用死记硬背的把每个命令和配置记住，当然诸位如果能记住那就更好啦。关于redis的介绍就不多说了，持久化，速度快，单线程，基于内存。 配置文">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/2019091922115335.jpeg?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzI3NzkwMDEx,size_16,color_FFFFFF,t_70">
+<meta property="article:published_time" content="2019-08-08T10:56:22.000Z">
+<meta property="article:modified_time" content="2022-02-25T07:14:51.677Z">
+<meta property="article:author" content="John Doe">
+<meta property="article:tag" content="java">
+<meta property="article:tag" content="linux">
+<meta property="article:tag" content="redis">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://img-blog.csdnimg.cn/2019091922115335.jpeg?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzI3NzkwMDEx,size_16,color_FFFFFF,t_70">
+
+
+<link rel="canonical" href="http://example.com/2019/08/08/%E4%BA%94%E3%80%81redis%E9%85%8D%E7%BD%AE%E4%BF%A1%E6%81%AF%E4%BB%A5%E5%8F%8A%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"http://example.com/2019/08/08/%E4%BA%94%E3%80%81redis%E9%85%8D%E7%BD%AE%E4%BF%A1%E6%81%AF%E4%BB%A5%E5%8F%8A%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/","path":"2019/08/08/五、redis配置信息以及常用命令/","title":"五、redis配置信息以及常用命令"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>五、redis配置信息以及常用命令 | Hexo</title>
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Hexo</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%89%8D%E8%A8%80"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6"><span class="nav-number">2.</span> <span class="nav-text">配置文件</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%BB%E7%BB%93%E4%B8%80%E4%B8%8B"><span class="nav-number">2.1.</span> <span class="nav-text">总结一下</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4"><span class="nav-number">3.</span> <span class="nav-text">常用命令</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%92%88%E5%AF%B9key%E7%9A%84%E5%91%BD%E4%BB%A4"><span class="nav-number">3.1.</span> <span class="nav-text">针对key的命令</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%92%88%E5%AF%B9String%E7%B1%BB%E5%9E%8B%E7%9A%84%E5%91%BD%E4%BB%A4"><span class="nav-number">3.2.</span> <span class="nav-text">针对String类型的命令</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%92%88%E5%AF%B9List%E7%B1%BB%E5%9E%8B"><span class="nav-number">3.3.</span> <span class="nav-text">针对List类型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%92%88%E5%AF%B9set%E7%B1%BB%E5%9E%8B"><span class="nav-number">3.4.</span> <span class="nav-text">针对set类型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%92%88%E5%AF%B9Hash%E7%B1%BB%E5%9E%8B"><span class="nav-number">3.5.</span> <span class="nav-text">针对Hash类型</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">John Doe</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">54</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+        <span class="site-state-item-count">13</span>
+        <span class="site-state-item-name">categories</span>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">35</span>
+        <span class="site-state-item-name">tags</span>
+      </div>
+  </nav>
+</div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2019/08/08/%E4%BA%94%E3%80%81redis%E9%85%8D%E7%BD%AE%E4%BF%A1%E6%81%AF%E4%BB%A5%E5%8F%8A%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="John Doe">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          五、redis配置信息以及常用命令
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2019-08-08 18:56:22" itemprop="dateCreated datePublished" datetime="2019-08-08T18:56:22+08:00">2019-08-08</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2022-02-25 15:14:51" itemprop="dateModified" datetime="2022-02-25T15:14:51+08:00">2022-02-25</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Redis/" itemprop="url" rel="index"><span itemprop="name">Redis</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>本来不打算写这篇的，因为网上有很多这种的，最后想想，既然打算做一个redis系列，还是把这一篇补上，刚好这段时间有个同事做了一个redis的基础培训，整理的很好，就拿来借用一下，但是我们实际开发中其实用不了那么多，我们对这些配置和命令有个大概的了解就行，也不用死记硬背的把每个命令和配置记住，当然诸位如果能记住那就更好啦。<br>关于redis的介绍就不多说了，持久化，速度快，单线程，基于内存。</p>
+<h1 id="配置文件"><a href="#配置文件" class="headerlink" title="配置文件"></a>配置文件</h1><p>redis的配置文件是redis.conf。我们上次安装的时候把它放在了<code>/use/local/redis/etc/redis.conf</code>,默认的配置文件应该在安装目录下的src&#x2F;redis.conf<br>配置文件的内容有很多</p>
+<ol>
+<li><p>Redis默认不是以守护进程的方式运行，可以通过该配置项修改，使用yes启用守护进程<br> daemonize no</p>
+</li>
+<li><p>当Redis以守护进程方式运行时，Redis默认会把pid写入&#x2F;var&#x2F;run&#x2F;redis.pid文件，可以通过pidfile指定<br> pidfile &#x2F;var&#x2F;run&#x2F;redis.pid</p>
+</li>
+<li><p>指定Redis监听端口，默认端口为6379<br> port 6379</p>
+</li>
+<li><p>绑定的主机地址<br>bind 127.0.0.1</p>
+</li>
+<li><p>当 客户端闲置多长时间后关闭连接，如果指定为0，表示关闭该功能<br> timeout 300</p>
+</li>
+<li><p>指定日志记录级别，Redis总共支持四个级别：debug、verbose、notice、warning，默认为verbose<br> loglevel verbose</p>
+</li>
+<li><p>日志记录方式，默认为标准输出，如果配置Redis为守护进程方式运行，而这里又配置为日志记录方式为标准输出，则日志将会发送给&#x2F;dev&#x2F;null，如果需要存储日志可以设置具体文件名。<br> logfile “&#x2F;home&#x2F;gdmt&#x2F;mastercom&#x2F;redis-4.0.5&#x2F;bin&#x2F;log_master.log”</p>
+</li>
+<li><p>设置数据库的数量，默认数据库为0，可以使用SELECT <dbid>命令在连接上指定数据库id<br> databases 16</p>
+</li>
+<li><p>指定在多长时间内，有多少次更新操作，就将数据同步到数据文件，可以多个条件配合<br> save <seconds> <changes><br> Redis默认配置文件中提供了三个条件：<br> save 900 1<br> save 300 10<br> save 60 10000<br> 分别表示900秒（15分钟）内有1个更改，300秒（5分钟）内有10个更改以及60秒内有10000个更改。</p>
+</li>
+<li><p>指定存储至本地数据库时是否压缩数据，默认为yes，Redis采用LZF压缩，如果为了节省CPU时间，可以关闭该选项，但会导致数据库文件变的巨大<br>rdbcompression yes</p>
+</li>
+<li><p>指定本地数据库文件名，默认值为dump.rdb<br>dbfilename dump.rdb</p>
+</li>
+<li><p>指定本地数据库存放目录<br>dir “&#x2F;home&#x2F;mastercom&#x2F;redis-4.0.5&#x2F;bin”</p>
+</li>
+<li><p>设置当本机为slav服务时，设置master服务的IP地址及端口，在Redis启动时，它会自动从master进行数据同步<br>slaveof <masterip> <masterport></p>
+</li>
+<li><p>当master服务设置了密码保护时，slav服务连接master的密码<br>masterauth <master-password></p>
+</li>
+<li><p>设置Redis连接密码，如果配置了连接密码，客户端在连接Redis时需要通过AUTH <password>命令提供密码，默认关闭<br>requirepass foobared</p>
+</li>
+<li><p>设置同一时间最大客户端连接数，默认无限制，Redis可以同时打开的客户端连接数为Redis进程可以打开的最大文件描述符数，如果设置 maxclients 0，表示不作限制。当客户端连接数到达限制时，Redis会关闭新的连接并向客户端返回max number of clients reached错误信息<br>maxclients 10000</p>
+</li>
+<li><p>指定Redis最大内存限制，Redis在启动时会把数据加载到内存中，达到最大内存后，Redis会先尝试清除已到期或即将到期的Key，当此方法处理 后，仍然到达最大内存设置，将无法再进行写入操作，但仍然可以进行读取操作。Redis新的vm机制，会把Key存放内存，Value会存放在swap区<br>maxmemory <bytes></p>
+</li>
+<li><p>指定是否在每次更新操作后进行日志记录，Redis在默认情况下是异步的把数据写入磁盘，如果不开启，可能会在断电时导致一段时间内的数据丢失。因为 redis本身同步数据文件是按上面save条件来同步的，所以有的数据会在一段时间内只存在于内存中。默认为no<br>appendonly no</p>
+</li>
+<li><p>指定更新日志文件名，默认为appendonly.aof<br> appendfilename appendonly.aof</p>
+</li>
+</ol>
+<h2 id="总结一下"><a href="#总结一下" class="headerlink" title="总结一下"></a>总结一下</h2><p>上面那么多配置，我和大家一样没有都记住，只是了解一个大概，要用的时候能查就行，上面很多都是默认配置，感觉一般要设置的下面这几个</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">daemonize yes</span><br><span class="line">port  端口号</span><br><span class="line">bind ip </span><br><span class="line">slaveof &lt;masterip&gt; &lt;masterport&gt;</span><br><span class="line">requirepass foobared</span><br></pre></td></tr></table></figure>
+
+<h1 id="常用命令"><a href="#常用命令" class="headerlink" title="常用命令"></a>常用命令</h1><h2 id="针对key的命令"><a href="#针对key的命令" class="headerlink" title="针对key的命令"></a>针对key的命令</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">exists(key)：确认一个key是否存在</span><br><span class="line">del(key)：删除一个key</span><br><span class="line">type(key)：返回值的类型</span><br><span class="line">keys(pattern)：返回满足给定pattern的所有key</span><br><span class="line">randomkey：随机返回key空间的一个</span><br><span class="line">keyrename(oldname, newname)：重命名key</span><br><span class="line">dbsize：返回当前数据库中key的数目</span><br><span class="line">expire：设定一个key的活动时间（s）</span><br><span class="line">ttl：获得一个key的活动时间</span><br><span class="line">move(key, dbindex)：移动当前数据库中的key到dbindex数据库</span><br><span class="line">flushdb：删除当前选择数据库中的所有key--慎用</span><br><span class="line">flushall：删除所有数据库中的所有key--慎用</span><br></pre></td></tr></table></figure>
+<p>真正常用的就</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">exists key</span><br><span class="line">del key</span><br><span class="line">type key</span><br><span class="line">dbsize</span><br><span class="line">expire</span><br></pre></td></tr></table></figure>
+<h2 id="针对String类型的命令"><a href="#针对String类型的命令" class="headerlink" title="针对String类型的命令"></a>针对String类型的命令</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">set(key, value)：给数据库中名称为key的string赋予值value</span><br><span class="line">get(key)：返回数据库中名称为key的string的value</span><br><span class="line">getset(key, value)：给名称为key的string赋予上一次的value</span><br><span class="line">mget(key1, key2,…, key N)：返回库中多个string的value</span><br><span class="line">setnx(key, value)：如果key不存在，添加string，名称为key，值为value</span><br><span class="line">setex(key, time, value)：向库中添加string，设定过期时间time</span><br><span class="line">mset(key N, value N)：批量设置多个string的值</span><br><span class="line">msetnx(key N, value N)：如果所有名称为key 的string都不存在 就添加</span><br><span class="line">incr(key)：名称为key的string增1操作</span><br><span class="line">incrby(key, integer)：名称为key的string增加integer</span><br><span class="line">decr(key)：名称为key的string减1操作</span><br><span class="line">decrby(key, integer)：名称为key的string减少integer</span><br><span class="line">append(key, value)：名称为key的string的值附加value</span><br><span class="line">substr(key, start, end)：返回名称为key的string的value的子串</span><br></pre></td></tr></table></figure>
+<p>我认为常用的</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">set</span><br><span class="line">get </span><br><span class="line">mset</span><br><span class="line">mget</span><br><span class="line">incr</span><br><span class="line">decr</span><br></pre></td></tr></table></figure>
+
+<h2 id="针对List类型"><a href="#针对List类型" class="headerlink" title="针对List类型"></a>针对List类型</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">rpush(key, value)：在名称为key的list尾添加一个值为value的元素</span><br><span class="line">lpush(key, value)：在名称为key的list头添加一个值为value的 元素</span><br><span class="line">llen(key)：返回名称为key的list的长度</span><br><span class="line">lrange(key, start, end)：返回名称为key的list中start至end之间的元素,-1是最后一位的索引</span><br><span class="line">ltrim(key, start, end)：截取名称为key的list</span><br><span class="line">lindex(key, index)：返回名称为key的list中index位置的元素</span><br><span class="line">lset(key, index, value)：给名称为key的list中index位置的元素赋值</span><br><span class="line">lrem(key, count, value)：删除count个key的list中值为value的元素</span><br><span class="line">lpop(key)：返回并删除名称为key的list中的首元素</span><br><span class="line">rpop(key)：返回并删除名称为key的list中的尾元素</span><br><span class="line">blpop(key1, key2,… key N, timeout)：lpop命令的block版本。</span><br><span class="line">brpop(key1, key2,… key N, timeout)：rpop的block版本。</span><br><span class="line">rpoplpush(srckey, dstkey)：返回并删除名称为srckey的list的尾元素，并将该元素添加到名称为dstkey的list的头部</span><br></pre></td></tr></table></figure>
+<p>一样我认为常用的,但是感觉list 用的不多</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">rpush</span><br><span class="line">lpush</span><br><span class="line">rlang</span><br><span class="line">llen</span><br><span class="line">lpop</span><br><span class="line">rpop</span><br></pre></td></tr></table></figure>
+<h2 id="针对set类型"><a href="#针对set类型" class="headerlink" title="针对set类型"></a>针对set类型</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">sadd(key, member)：向名称为key的set中添加元素member</span><br><span class="line">srem(key, member) ：删除名称为key的set中的元素member</span><br><span class="line">spop(key) ：随机返回并删除名称为key的set中一个元素</span><br><span class="line">smove(srckey, dstkey, member) ：移到集合元素</span><br><span class="line">scard(key) ：返回名称为key的set的基数</span><br><span class="line">sismember(key, member) ：member是否是名称为key的set的元素</span><br><span class="line">sinter(key1, key2,…key N) ：求交集</span><br><span class="line">sinterstore(dstkey, (keys)) ：求交集并将交集保存到dstkey的集合</span><br><span class="line">sunion(key1, (keys)) ：求并集</span><br><span class="line">sunionstore(dstkey, (keys)) ：求并集并将并集保存到dstkey的集合</span><br><span class="line">sdiff(key1, (keys)) ：求差集</span><br><span class="line">sdiffstore(dstkey, (keys)) ：求差集并将差集保存到dstkey的集合</span><br><span class="line">smembers(key) ：返回名称为key的set的所有元素</span><br><span class="line">srandmember(key) ：随机返回名称为key的set的一个元素</span><br></pre></td></tr></table></figure>
+<p>感觉这个是用的最少了，很多都记不住，就知道添加和读取.zset 和set的都用的很少</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">sadd</span><br><span class="line">smembers</span><br><span class="line"></span><br><span class="line">sadd</span><br><span class="line">zrange</span><br></pre></td></tr></table></figure>
+
+<h2 id="针对Hash类型"><a href="#针对Hash类型" class="headerlink" title="针对Hash类型"></a>针对Hash类型</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">hset(key, field, value)：向名称为key的hash中添加元素field</span><br><span class="line">hget(key, field)：返回名称为key的hash中field对应的value</span><br><span class="line">hmget(key, (fields))：返回名称为key的hash中field i对应的value</span><br><span class="line">hmset(key, (fields))：向名称为key的hash中添加元素field </span><br><span class="line">hincrby(key, field, integer)：将名称为key的hash中field的value增加integer</span><br><span class="line">hexists(key, field)：名称为key的hash中是否存在键为field的域</span><br><span class="line">hdel(key, field)：删除名称为key的hash中键为field的域</span><br><span class="line">hlen(key)：返回名称为key的hash中元素个数</span><br><span class="line">hkeys(key)：返回名称为key的hash中所有键</span><br><span class="line">hvals(key)：返回名称为key的hash中所有键对应的value</span><br><span class="line">hgetall(key)：返回名称为key的hash中所有的键（field）及其对应的value</span><br></pre></td></tr></table></figure>
+<p>hash类型用的比较多，特别是对象存储时候，基本上都是用hash 存储的。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">hset</span><br><span class="line">hget</span><br><span class="line">hmset</span><br><span class="line">hmget</span><br></pre></td></tr></table></figure>
+
+
+<p>后续加油♡</p>
+<p>欢迎大家关注个人公众号 “程序员爱酸奶”</p>
+<p>分享各种学习资料，包含java，linux，大数据等。资料包含视频文档以及源码，同时分享本人及投递的优质技术博文。</p>
+<p>如果大家喜欢记得关注和分享哟❤<br><img src="https://img-blog.csdnimg.cn/2019091922115335.jpeg?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzI3NzkwMDEx,size_16,color_FFFFFF,t_70" alt="file"></p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/java/" rel="tag"># java</a>
+              <a href="/tags/linux/" rel="tag"># linux</a>
+              <a href="/tags/redis/" rel="tag"># redis</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2019/08/07/%E5%9B%9B%E3%80%81StringRedisTemplate%20%E5%92%8CRedisTemlate%E6%9C%89%E4%BB%80%E4%B9%88%E4%B8%8D%E5%90%8C/" rel="prev" title="四、StringRedisTemplate 和RedisTemlate有什么不同">
+                  <i class="fa fa-chevron-left"></i> 四、StringRedisTemplate 和RedisTemlate有什么不同
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2019/08/21/%E5%85%AD%E3%80%81%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6%E5%8E%9F%E6%9D%A5%E8%BF%99%E4%B9%88%E7%AE%80%E5%8D%95/" rel="next" title="六、主从复制原来这么简单">
+                  六、主从复制原来这么简单 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">John Doe</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

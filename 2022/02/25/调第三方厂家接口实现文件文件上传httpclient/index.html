@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.0.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.10.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
+
+  <meta name="description" content="前言这种情况算是很少见的，前端上传文件到服务端，服务端接收文件，再调第三方接口，将文件存到第三方服务器。 从客户端接收文件的就不说了，比较常见，就记录下调第三方接口带参数。 代码url为路径jsonObject为常规的请求参数token 为鉴权file 为文件。大伙根据自己的需求进行修改。核心代码为： 12345678910111213141516MultipartEntityBuilder re">
+<meta property="og:type" content="website">
+<meta property="og:title" content="调第三方厂家接口实现文件文件上传httpclient">
+<meta property="og:url" content="http://example.com/2022/02/25/%E8%B0%83%E7%AC%AC%E4%B8%89%E6%96%B9%E5%8E%82%E5%AE%B6%E6%8E%A5%E5%8F%A3%E5%AE%9E%E7%8E%B0%E6%96%87%E4%BB%B6%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0httpclient/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="前言这种情况算是很少见的，前端上传文件到服务端，服务端接收文件，再调第三方接口，将文件存到第三方服务器。 从客户端接收文件的就不说了，比较常见，就记录下调第三方接口带参数。 代码url为路径jsonObject为常规的请求参数token 为鉴权file 为文件。大伙根据自己的需求进行修改。核心代码为： 12345678910111213141516MultipartEntityBuilder re">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2022-02-25T12:54:08.418Z">
+<meta property="article:modified_time" content="2022-02-25T07:14:52.086Z">
+<meta property="article:author" content="John Doe">
+<meta property="article:tag" content="springboot">
+<meta property="article:tag" content="java">
+<meta property="article:tag" content="上传文件">
+<meta property="article:tag" content="httpclient">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="http://example.com/2022/02/25/%E8%B0%83%E7%AC%AC%E4%B8%89%E6%96%B9%E5%8E%82%E5%AE%B6%E6%8E%A5%E5%8F%A3%E5%AE%9E%E7%8E%B0%E6%96%87%E4%BB%B6%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0httpclient/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"http://example.com/2022/02/25/%E8%B0%83%E7%AC%AC%E4%B8%89%E6%96%B9%E5%8E%82%E5%AE%B6%E6%8E%A5%E5%8F%A3%E5%AE%9E%E7%8E%B0%E6%96%87%E4%BB%B6%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0httpclient/","path":"2022/02/25/调第三方厂家接口实现文件文件上传httpclient/","title":"调第三方厂家接口实现文件文件上传httpclient"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>调第三方厂家接口实现文件文件上传httpclient | Hexo</title>
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Hexo</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%89%8D%E8%A8%80"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BB%A3%E7%A0%81"><span class="nav-number">2.</span> <span class="nav-text">代码</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">John Doe</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">54</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+        <span class="site-state-item-count">13</span>
+        <span class="site-state-item-name">categories</span>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">35</span>
+        <span class="site-state-item-name">tags</span>
+      </div>
+  </nav>
+</div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2022/02/25/%E8%B0%83%E7%AC%AC%E4%B8%89%E6%96%B9%E5%8E%82%E5%AE%B6%E6%8E%A5%E5%8F%A3%E5%AE%9E%E7%8E%B0%E6%96%87%E4%BB%B6%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0httpclient/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="John Doe">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          调第三方厂家接口实现文件文件上传httpclient
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+      
+
+      <time title="Created: 2022-02-25 20:54:08 / Modified: 15:14:52" itemprop="dateCreated datePublished" datetime="2022-02-25T20:54:08+08:00">2022-02-25</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/springBoot%E7%95%AA%E5%A4%96%E7%AF%87/" itemprop="url" rel="index"><span itemprop="name">springBoot番外篇</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>这种情况算是很少见的，前端上传文件到服务端，服务端接收文件，再调第三方接口，将文件存到第三方服务器。</p>
+<p>从客户端接收文件的就不说了，比较常见，就记录下调第三方接口带参数。</p>
+<h1 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h1><p>url为路径<br>jsonObject为常规的请求参数<br>token 为鉴权<br>file 为文件。大伙根据自己的需求进行修改。<br>核心代码为：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">MultipartEntityBuilder reqEntity = MultipartEntityBuilder.create();</span><br><span class="line">reqEntity.addBinaryBody(&quot;file&quot;, new FileInputStream(file), ContentType.DEFAULT_BINARY, file.getName());</span><br><span class="line">            Iterator iter = jsonObject.entrySet().iterator();</span><br><span class="line"></span><br><span class="line">            while (iter.hasNext()) &#123;</span><br><span class="line">                Map.Entry entry = (Map.Entry) iter.next();</span><br><span class="line">                System.out.println(entry.getKey().toString());</span><br><span class="line">                System.out.println(entry.getValue().toString());</span><br><span class="line"></span><br><span class="line">                StringBody value = new StringBody(entry.getValue().toString(), ContentType.create(&quot;text/plain&quot;, Consts.UTF_8));</span><br><span class="line">                reqEntity.addPart(entry.getKey().toString(),value);</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            HttpEntity httpEntity = reqEntity.build();</span><br><span class="line">            HttpPost httppost = new HttpPost(urlBuilder.toString());</span><br><span class="line">            httppost.setEntity(httpEntity);</span><br></pre></td></tr></table></figure>
+<p>主要是使用MultipartEntityBuilder 将文件通过body 进行传输。<br>完整方法代码。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br></pre></td><td class="code"><pre><span class="line">public static String sendPost(String url, JSONObject jsonObject, String token,File file) &#123;</span><br><span class="line">        StringBuilder urlBuilder = new StringBuilder(baseURLPath);</span><br><span class="line">        urlBuilder.append(url);</span><br><span class="line">        log.info(&quot;URL:&quot; + url);</span><br><span class="line">        log.info(&quot;Parm:&quot; + jsonObject);</span><br><span class="line">        FileBody fileBody=new FileBody(file);</span><br><span class="line">        MultipartEntityBuilder reqEntity = MultipartEntityBuilder.create();</span><br><span class="line"></span><br><span class="line">        try &#123;</span><br><span class="line">            reqEntity.addBinaryBody(&quot;file&quot;, new FileInputStream(file), ContentType.DEFAULT_BINARY, file.getName());</span><br><span class="line">            Iterator iter = jsonObject.entrySet().iterator();</span><br><span class="line"></span><br><span class="line">            while (iter.hasNext()) &#123;</span><br><span class="line">                Map.Entry entry = (Map.Entry) iter.next();</span><br><span class="line">                System.out.println(entry.getKey().toString());</span><br><span class="line">                System.out.println(entry.getValue().toString());</span><br><span class="line"></span><br><span class="line">                StringBody value = new StringBody(entry.getValue().toString(), ContentType.create(&quot;text/plain&quot;, Consts.UTF_8));</span><br><span class="line">                reqEntity.addPart(entry.getKey().toString(),value);</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            HttpEntity httpEntity = reqEntity.build();</span><br><span class="line">            HttpPost httppost = new HttpPost(urlBuilder.toString());</span><br><span class="line">            httppost.setEntity(httpEntity);</span><br><span class="line">            setHttpHeader(httppost, token);</span><br><span class="line"></span><br><span class="line">            RequestConfig config = RequestConfig.custom()</span><br><span class="line">					.setConnectTimeout(1000)</span><br><span class="line">					.setConnectionRequestTimeout(1000)</span><br><span class="line">					.setSocketTimeout(10 *1000)</span><br><span class="line">					.build();</span><br><span class="line">            //数据传输的超时时间</span><br><span class="line">            httppost.setConfig(config);</span><br><span class="line">            String result = getPostResult(httppost);</span><br><span class="line">            log.info(result);</span><br><span class="line">            return result;</span><br><span class="line">        &#125; catch (Exception e) &#123;</span><br><span class="line">            log.error(e);</span><br><span class="line">            return &quot;&quot;;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">private static void setHttpHeader(HttpPost httppost, String token) &#123;</span><br><span class="line">		httppost.setHeader(&quot;Authorization&quot;, &quot;Bearer &quot; + token);</span><br><span class="line">	&#125;</span><br><span class="line">/**</span><br><span class="line">	 * 获取post请求返回结果</span><br><span class="line">	 * </span><br><span class="line">	 * @param httppost</span><br><span class="line">	 * @return</span><br><span class="line">	 */</span><br><span class="line">	private static String getPostResult(HttpPost httppost) &#123;</span><br><span class="line">		String result = null;</span><br><span class="line">		try (CloseableHttpResponse response = httpclient.execute(httppost);) &#123;</span><br><span class="line">			HttpEntity entity = response.getEntity();</span><br><span class="line">			result = EntityUtils.toString(entity);</span><br><span class="line">			if (result.contains(&quot;Invalid token&quot;)) &#123;</span><br><span class="line">				result = &quot;Token 过期，请重新登录&quot;;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125; catch (Exception e) &#123;</span><br><span class="line">			log.error(e.toString());</span><br><span class="line">			result = &quot;HTTP请求异常,请重试&quot;;</span><br><span class="line">		&#125;</span><br><span class="line">		return result;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>使用的是httpclient。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line">&lt;dependency&gt;</span><br><span class="line">            &lt;groupId&gt;org.apache.httpcomponents&lt;/groupId&gt;</span><br><span class="line">            &lt;artifactId&gt;httpclient&lt;/artifactId&gt;</span><br><span class="line">            &lt;version&gt;4.5.3&lt;/version&gt;</span><br><span class="line">        &lt;/dependency&gt;</span><br><span class="line">        &lt;dependency&gt;</span><br><span class="line">            &lt;groupId&gt;org.apache.httpcomponents&lt;/groupId&gt;</span><br><span class="line">            &lt;artifactId&gt;httpcore-nio&lt;/artifactId&gt;</span><br><span class="line">            &lt;version&gt;4.4.4&lt;/version&gt;</span><br><span class="line">        &lt;/dependency&gt;</span><br><span class="line">        &lt;dependency&gt;</span><br><span class="line">            &lt;groupId&gt;org.apache.httpcomponents&lt;/groupId&gt;</span><br><span class="line">            &lt;artifactId&gt;httpcore&lt;/artifactId&gt;</span><br><span class="line">            &lt;version&gt;4.4.4&lt;/version&gt;</span><br><span class="line">        &lt;/dependency&gt;</span><br><span class="line"></span><br><span class="line">        &lt;dependency&gt;</span><br><span class="line">            &lt;groupId&gt;org.apache.httpcomponents&lt;/groupId&gt;</span><br><span class="line">            &lt;artifactId&gt;httpclient-win&lt;/artifactId&gt;</span><br><span class="line">            &lt;version&gt;4.5.2&lt;/version&gt;</span><br><span class="line">        &lt;/dependency&gt;</span><br><span class="line">        &lt;dependency&gt;</span><br><span class="line">            &lt;groupId&gt;org.apache.httpcomponents&lt;/groupId&gt;</span><br><span class="line">            &lt;artifactId&gt;httpclient-cache&lt;/artifactId&gt;</span><br><span class="line">            &lt;version&gt;4.5.2&lt;/version&gt;</span><br><span class="line">        &lt;/dependency&gt;</span><br><span class="line"></span><br><span class="line">        &lt;dependency&gt;</span><br><span class="line">            &lt;groupId&gt;org.apache.httpcomponents&lt;/groupId&gt;</span><br><span class="line">            &lt;artifactId&gt;httpasyncclient&lt;/artifactId&gt;</span><br><span class="line">            &lt;version&gt;4.0-beta3&lt;/version&gt;</span><br><span class="line">        &lt;/dependency&gt;</span><br></pre></td></tr></table></figure>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/springboot/" rel="tag"># springboot</a>
+              <a href="/tags/java/" rel="tag"># java</a>
+              <a href="/tags/%E4%B8%8A%E4%BC%A0%E6%96%87%E4%BB%B6/" rel="tag"># 上传文件</a>
+              <a href="/tags/httpclient/" rel="tag"># httpclient</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2022/02/25/hello-world/" rel="prev" title="Hello World">
+                  <i class="fa fa-chevron-left"></i> Hello World
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2022/02/25/%E4%BA%8C%E3%80%81docker%20%E9%95%9C%E5%83%8F%E5%AE%B9%E5%99%A8%E5%B8%B8%E7%94%A8%E6%93%8D%E4%BD%9C(%E8%AE%A9%E6%88%91%E4%BB%AC%E7%94%A8docker%20%E6%BA%9C%E5%BE%97%E9%A3%9E%E8%B5%B7)/" rel="next" title="二、docker 镜像容器常用操作(让我们用docker 溜得飞起)">
+                  二、docker 镜像容器常用操作(让我们用docker 溜得飞起) <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">John Doe</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

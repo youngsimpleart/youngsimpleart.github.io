@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.0.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.10.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
+
+  <meta name="description" content="前言其实vue 的语法在官网上都有详细的讲解和例子，我这里就不多做什么说明，只是把自己学习这些语法是练习的例子贴出来。另外官网上的例子是一个个的html文件。我这里的是一个的vue 文件，通过不同的路由进行访问。类似就上图的这种效果吧，没有什么样式，大伙将就看看嘿嘿。好了，下面我们就一起来看下主题的vue 语法吧。 路由其实不应该先讲路由的，但是想要做这种点击跳转的就是通过路由实现的。其实也很简单">
+<meta property="og:type" content="website">
+<meta property="og:title" content="三、Vue 的一些语法样例">
+<meta property="og:url" content="http://example.com/2022/02/25/%E4%B8%89%E3%80%81Vue%20%E7%9A%84%E4%B8%80%E4%BA%9B%E8%AF%AD%E6%B3%95%E6%A0%B7%E4%BE%8B/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="前言其实vue 的语法在官网上都有详细的讲解和例子，我这里就不多做什么说明，只是把自己学习这些语法是练习的例子贴出来。另外官网上的例子是一个个的html文件。我这里的是一个的vue 文件，通过不同的路由进行访问。类似就上图的这种效果吧，没有什么样式，大伙将就看看嘿嘿。好了，下面我们就一起来看下主题的vue 语法吧。 路由其实不应该先讲路由的，但是想要做这种点击跳转的就是通过路由实现的。其实也很简单">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20191219194915328.gif">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20191219200042589.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9xdWVsbGFuYW4uYmxvZy5jc2RuLm5ldA==,size_16,color_FFFFFF,t_70">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/2019122009211334.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9xdWVsbGFuYW4uYmxvZy5jc2RuLm5ldA==,size_16,color_FFFFFF,t_70">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/2019122009254655.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9xdWVsbGFuYW4uYmxvZy5jc2RuLm5ldA==,size_16,color_FFFFFF,t_70">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20191220094106609.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9xdWVsbGFuYW4uYmxvZy5jc2RuLm5ldA==,size_16,color_FFFFFF,t_70">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20191220101759747.gif">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20191015213334732.jpeg?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzI3NzkwMDEx,size_16,color_FFFFFF,t_70">
+<meta property="article:published_time" content="2022-02-25T12:54:08.596Z">
+<meta property="article:modified_time" content="2022-02-25T07:14:51.501Z">
+<meta property="article:author" content="John Doe">
+<meta property="article:tag" content="vue">
+<meta property="article:tag" content="前端">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://img-blog.csdnimg.cn/20191219194915328.gif">
+
+
+<link rel="canonical" href="http://example.com/2022/02/25/%E4%B8%89%E3%80%81Vue%20%E7%9A%84%E4%B8%80%E4%BA%9B%E8%AF%AD%E6%B3%95%E6%A0%B7%E4%BE%8B/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"http://example.com/2022/02/25/%E4%B8%89%E3%80%81Vue%20%E7%9A%84%E4%B8%80%E4%BA%9B%E8%AF%AD%E6%B3%95%E6%A0%B7%E4%BE%8B/","path":"2022/02/25/三、Vue 的一些语法样例/","title":"三、Vue 的一些语法样例"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>三、Vue 的一些语法样例 | Hexo</title>
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Hexo</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%89%8D%E8%A8%80"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%B7%AF%E7%94%B1"><span class="nav-number">2.</span> <span class="nav-text">路由</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%9D%A1%E4%BB%B6%E4%B8%8E%E5%BE%AA%E7%8E%AF"><span class="nav-number">3.</span> <span class="nav-text">条件与循环</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%9B%91%E5%90%AC%E4%BA%8B%E4%BB%B6"><span class="nav-number">4.</span> <span class="nav-text">监听事件</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8F%91%E9%80%81HTTP-%E8%AF%B7%E6%B1%82"><span class="nav-number">5.</span> <span class="nav-text">发送HTTP 请求</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%95%AA%E5%A4%96"><span class="nav-number">6.</span> <span class="nav-text">番外</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">John Doe</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">54</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+        <span class="site-state-item-count">13</span>
+        <span class="site-state-item-name">categories</span>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">35</span>
+        <span class="site-state-item-name">tags</span>
+      </div>
+  </nav>
+</div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2022/02/25/%E4%B8%89%E3%80%81Vue%20%E7%9A%84%E4%B8%80%E4%BA%9B%E8%AF%AD%E6%B3%95%E6%A0%B7%E4%BE%8B/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="John Doe">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          三、Vue 的一些语法样例
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+      
+
+      <time title="Created: 2022-02-25 20:54:08 / Modified: 15:14:51" itemprop="dateCreated datePublished" datetime="2022-02-25T20:54:08+08:00">2022-02-25</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/vue/" itemprop="url" rel="index"><span itemprop="name">vue</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>其实vue 的语法在官网上都有详细的讲解和例子，我这里就不多做什么说明，只是把自己学习这些语法是练习的例子贴出来。另外官网上的例子是一个个的html文件。我这里的是一个的vue 文件，通过不同的路由进行访问。<br><img src="https://img-blog.csdnimg.cn/20191219194915328.gif" alt="在这里插入图片描述"><br>类似就上图的这种效果吧，没有什么样式，大伙将就看看嘿嘿。好了，下面我们就一起来看下主题的vue 语法吧。</p>
+<h1 id="路由"><a href="#路由" class="headerlink" title="路由"></a>路由</h1><p>其实不应该先讲路由的，但是想要做这种点击跳转的就是通过路由实现的。其实也很简单，我们只求会用，不求为什要这样吧先。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;router-link :to=&quot;&#123;name: &#x27;IfAndFor&#x27;&#125;&quot;&gt;</span><br><span class="line">条件与循环</span><br><span class="line">&lt;/router-link&gt;</span><br></pre></td></tr></table></figure>
+<p>可以看到我们通过 router-link 就可以实现跳转。to 表示跳转的地址，name 指跳转的路由。当然这个路由需要我们在src–router–index.js 中配置好，并且有相关的组件才行哟。<br><img src="https://img-blog.csdnimg.cn/20191219200042589.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9xdWVsbGFuYW4uYmxvZy5jc2RuLm5ldA==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<p>我们要新增路由的话，就在index.js 中增加对应配置就好了，然后就可以通过router-link来实现界面见的跳转。</p>
+<h1 id="条件与循环"><a href="#条件与循环" class="headerlink" title="条件与循环"></a>条件与循环</h1><p>我们配置好路由后，现在我们来看看v-if 和v-for 我们新建一个组件如下:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line">&lt;template xmlns:v-bind=&quot;http://www.w3.org/1999/xhtml&quot;&gt;</span><br><span class="line">  &lt;div&gt;</span><br><span class="line">      &lt;div id=&quot;for&quot;&gt;</span><br><span class="line">        &lt;p&gt;一&lt;/p&gt;</span><br><span class="line">        &lt;table&gt;</span><br><span class="line">          &lt;tr v-for=&quot;(value, key, index) in object&quot;&gt;</span><br><span class="line">            &lt;td v-if=&quot;key === &#x27;url&#x27;&quot;&gt;</span><br><span class="line">              &lt;a v-bind:href=&quot;value&quot;&gt; &#123;&#123;value&#125;&#125;&lt;/a&gt;</span><br><span class="line">            &lt;/td&gt;</span><br><span class="line">            &lt;td v-else&gt;</span><br><span class="line">              &#123;&#123; value &#125;&#125;</span><br><span class="line">            &lt;/td&gt;</span><br><span class="line">          &lt;/tr&gt;</span><br><span class="line">        &lt;/table&gt;</span><br><span class="line">        &lt;br&gt;</span><br><span class="line">        &lt;p&gt;二&lt;/p&gt;</span><br><span class="line">        &lt;ul&gt;</span><br><span class="line">          &lt;li v-for=&quot;(value, key, index) in object&quot;&gt;</span><br><span class="line">            &#123;&#123; index &#125;&#125;. &#123;&#123; key &#125;&#125; : &#123;&#123; value &#125;&#125;</span><br><span class="line">          &lt;/li&gt;</span><br><span class="line">        &lt;/ul&gt;</span><br><span class="line">        &lt;br&gt;</span><br><span class="line">        &lt;p&gt;二&lt;/p&gt;</span><br><span class="line">        &lt;ul&gt;</span><br><span class="line">          &lt;li v-for=&quot;(value, key) in object&quot;&gt;</span><br><span class="line">            &#123;&#123; key &#125;&#125; : &#123;&#123; value &#125;&#125;</span><br><span class="line">          &lt;/li&gt;</span><br><span class="line">        &lt;/ul&gt;</span><br><span class="line">      &lt;/div&gt;</span><br><span class="line">    &lt;/div&gt;</span><br><span class="line">&lt;/template&gt;</span><br><span class="line"></span><br><span class="line">&lt;script&gt;</span><br><span class="line">    export default &#123;</span><br><span class="line">        name: &quot;&quot;,</span><br><span class="line">      data()&#123;</span><br><span class="line">        return &#123;</span><br><span class="line">          object: &#123;</span><br><span class="line">            name: &#x27;quellanan&#x27;,</span><br><span class="line">            url: &#x27;http://quellanan.xyz&#x27;,</span><br><span class="line">            slogan: &#x27;学的不仅是技术，更是梦想！&#x27;</span><br><span class="line">          &#125;</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&lt;/script&gt;</span><br></pre></td></tr></table></figure>
+
+<p>可以看到我使用了三种方式进行for 循环。index 是索引，key 是键， value 是值。这些其实和Java 中的循环差不多。无非就是通过索引遍历，要不就是通过键值遍历。</p>
+<p>v-if 和v-else-if v-else 也是一样的。满足条件就显示组件，知道这样用就可以。</p>
+<p>但是有一点，上面代码也发现了，无论是v-if 还是v-for, 都要与某个标签结合使用。单独是无法使用的。</p>
+<h1 id="监听事件"><a href="#监听事件" class="headerlink" title="监听事件"></a>监听事件</h1><p>听起来很高大上，其实就是一个 watch 方法。<br>我们写一个单位换算的组件:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br></pre></td><td class="code"><pre><span class="line">&lt;template&gt;</span><br><span class="line">  &lt;div&gt;</span><br><span class="line">      &lt;div style=&quot;margin: 20px&quot;&gt;</span><br><span class="line">        千米 : &lt;input type = &quot;text&quot; v-model = &quot;kilometers&quot;&gt;</span><br><span class="line">        米 : &lt;input type = &quot;text&quot; v-model = &quot;meters&quot;&gt;</span><br><span class="line">        &lt;p id=&quot;info&quot;&gt;&lt;/p&gt;</span><br><span class="line">      &lt;/div&gt;</span><br><span class="line"></span><br><span class="line">      &lt;div style=&quot;margin: 20px&quot;&gt;</span><br><span class="line">        小时 : &lt;input type = &quot;text&quot; v-model = &quot;hour&quot;&gt;</span><br><span class="line">        分钟 : &lt;input type = &quot;text&quot; v-model = &quot;minute&quot;&gt;</span><br><span class="line">        秒 : &lt;input type = &quot;text&quot; v-model = &quot;second&quot;&gt;</span><br><span class="line">        &lt;br&gt;</span><br><span class="line">        天 : &lt;input type = &quot;text&quot; v-model = &quot;day&quot;&gt;</span><br><span class="line">        &lt;br&gt;</span><br><span class="line">        星期 : &lt;input type = &quot;text&quot; v-model = &quot;week&quot;&gt;</span><br><span class="line">      &lt;/div&gt;</span><br><span class="line">      &lt;div style=&quot;margin: 20px&quot;&gt;</span><br><span class="line">        &lt;p &gt;计数器: &#123;&#123; counter &#125;&#125;&lt;/p&gt;</span><br><span class="line">        &lt;button @click = &quot;counter++&quot;&gt;点我&lt;/button&gt;</span><br><span class="line">      &lt;/div&gt;</span><br><span class="line">  &lt;/div&gt;</span><br><span class="line">&lt;/template&gt;</span><br><span class="line"></span><br><span class="line">&lt;script&gt;</span><br><span class="line">    export default &#123;</span><br><span class="line">        name: &quot;&quot;,</span><br><span class="line">      data()&#123;</span><br><span class="line">          return&#123;</span><br><span class="line">            kilometers : 0,</span><br><span class="line">            meters:0,</span><br><span class="line">            second : 0,</span><br><span class="line">            minute : 0,</span><br><span class="line">            hour : 0,</span><br><span class="line">            day : 0,</span><br><span class="line">            week : 0,</span><br><span class="line">            counter: 0</span><br><span class="line">          &#125;</span><br><span class="line">      &#125;,</span><br><span class="line">      watch : &#123;</span><br><span class="line">        kilometers:function(val) &#123;</span><br><span class="line">          this.kilometers = val;</span><br><span class="line">          this.meters = this.kilometers * 1000</span><br><span class="line">        &#125;,</span><br><span class="line">        meters : function (val) &#123;</span><br><span class="line">          this.kilometers = val/ 1000;</span><br><span class="line">          this.meters = val;</span><br><span class="line">        &#125;,</span><br><span class="line">        week:function(val) &#123;</span><br><span class="line">          this.week = val;</span><br><span class="line">          this.day = this.week * 7;</span><br><span class="line">          this.hour = this.day * 24;</span><br><span class="line">          this.minute = this.hour * 60;</span><br><span class="line">          this.second = this.minute * 60;</span><br><span class="line">        &#125;,</span><br><span class="line">        day : function (val) &#123;</span><br><span class="line">          this.day = val;</span><br><span class="line">          this.week = this.day/7;</span><br><span class="line">          this.hour = this.day * 24;</span><br><span class="line">          this.minute = this.hour * 60;</span><br><span class="line">          this.second = this.minute * 60;</span><br><span class="line">        &#125;,</span><br><span class="line">        hour : function (val) &#123;</span><br><span class="line">          this.hour = val;</span><br><span class="line">          this.day = this.hour/24;</span><br><span class="line">          this.week = this.day/7;</span><br><span class="line">          this.minute = this.hour * 60;</span><br><span class="line">          this.second = this.minute * 60;</span><br><span class="line">        &#125;,</span><br><span class="line">        minute : function (val) &#123;</span><br><span class="line">          this.minute = val;</span><br><span class="line">          this.hour = this.minute/60;</span><br><span class="line">          this.day = this.hour/24;</span><br><span class="line">          this.week = this.day/7;</span><br><span class="line">          this.second = this.minute * 60;</span><br><span class="line">        &#125;,</span><br><span class="line">        second : function (val) &#123;</span><br><span class="line">          this.second = val;</span><br><span class="line">          this.minute = this.second/60;</span><br><span class="line">          this.hour = this.minute/60;</span><br><span class="line">          this.day = this.hour/24;</span><br><span class="line">          this.week = this.day/7;</span><br><span class="line">        &#125;,</span><br><span class="line">        counter :function(nval, oval) &#123;</span><br><span class="line">          //alert(&#x27;计数器值的变化 :&#x27; + oval + &#x27; 变为 &#x27; + nval + &#x27;!&#x27;);</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;;</span><br><span class="line">&lt;/script&gt;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>v-model 表示数据双向绑定，这个没有什么好说的。data 初始化数据，watch  方法中就是监听函数，监听各自的组件并进行处理。</p>
+<h1 id="发送HTTP-请求"><a href="#发送HTTP-请求" class="headerlink" title="发送HTTP 请求"></a>发送HTTP 请求</h1><p>我们要做前后端分离，那么通过http 请求访问后端数据是避免不了的。所以我们一起来看下。我这里也是查看资料中的例子。直接拿过来用了。<br>我们创建一个BlogList.vue 文件，内容如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line">&lt;template&gt;</span><br><span class="line">  &lt;div &gt;</span><br><span class="line">    &lt;table&gt;</span><br><span class="line">      &lt;tr v-for=&quot;blog in blogs&quot;&gt;</span><br><span class="line">        &lt;!--&lt;td @click=&#x27;show_blog(blog.id)&#x27;&gt;&#123;&#123;blog.title&#125;&#125;&lt;/td&gt;--&gt;</span><br><span class="line">        &lt;td&gt;</span><br><span class="line">          &lt;router-link :to=&quot;&#123;name: &#x27;Blog&#x27;, query: &#123;id: blog.id&#125;&#125;&quot;&gt;</span><br><span class="line">            &#123;&#123;blog.title&#125;&#125;</span><br><span class="line">          &lt;/router-link&gt;</span><br><span class="line">        &lt;/td&gt;</span><br><span class="line">      &lt;/tr&gt;</span><br><span class="line">    &lt;/table&gt;</span><br><span class="line">  &lt;/div&gt;</span><br><span class="line">&lt;/template&gt;</span><br><span class="line"></span><br><span class="line">&lt;script&gt;</span><br><span class="line">    export default &#123;</span><br><span class="line">      data () &#123;</span><br><span class="line">        return &#123;</span><br><span class="line">          title: &#x27;博客列表页&#x27;,</span><br><span class="line">          blogs: []</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;,</span><br><span class="line">      mounted () &#123;</span><br><span class="line">        this.$http.get(&#x27;api/interface/blogs/all&#x27;).then((response) =&gt; &#123;</span><br><span class="line">          console.info(response.body)</span><br><span class="line">          this.blogs = response.body.blogs</span><br><span class="line">        &#125;, (response) =&gt; &#123;</span><br><span class="line">          console.error(response)</span><br><span class="line">        &#125;);</span><br><span class="line">      &#125;,</span><br><span class="line">      methods:&#123;</span><br><span class="line">        show_blog: function(blog_id) &#123;</span><br><span class="line">          this.$router.push(&#123;name: &#x27;Blog&#x27;, query: &#123;id: blog_id&#125;&#125;)</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;</span><br><span class="line">      &#125;</span><br><span class="line"></span><br><span class="line">&lt;/script&gt;</span><br><span class="line"></span><br><span class="line">&lt;style &gt;</span><br><span class="line"></span><br><span class="line">  td &#123;</span><br><span class="line">    border-bottom: 1px solid grey;</span><br><span class="line">  &#125;</span><br><span class="line">&lt;/style&gt;</span><br></pre></td></tr></table></figure>
+<p>上面的代码可以看到。mounted 方法中发送http 请求。mounted 函数是初始化页面后，将数据渲染到界面上的。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">mounted () &#123;</span><br><span class="line">  this.$http.get(&#x27;api/interface/blogs/all&#x27;).then((response) =&gt; &#123;</span><br><span class="line">    this.blogs = response.body.blogs</span><br><span class="line">  &#125;, (response) =&gt; &#123;</span><br><span class="line">    console.error(response)</span><br><span class="line">  &#125;);</span><br><span class="line">&#125;,</span><br></pre></td></tr></table></figure>
+<p>我们启动项目，发现报这种错误。这是因为我们项目中没有引入 vue-resource 所以我们需要在项目中引入。<br><img src="https://img-blog.csdnimg.cn/2019122009211334.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9xdWVsbGFuYW4uYmxvZy5jc2RuLm5ldA==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<p>我们在idea  中打开控制台（alt+F12）。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm  install vue-resource</span><br></pre></td></tr></table></figure>
+<p><img src="https://img-blog.csdnimg.cn/2019122009254655.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9xdWVsbGFuYW4uYmxvZy5jc2RuLm5ldA==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>安装好之后，我们在在main.js 中引入它</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">import VueResource from &#x27;vue-resource&#x27;</span><br><span class="line">Vue.use(VueResource)</span><br><span class="line">Vue.http.options.emulateJSON = true //允许使用post 请求。</span><br></pre></td></tr></table></figure>
+
+<p>在config–index.js 中设置一下代理，模拟一下跨域请求，不然接口访问不了。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">proxyTable: &#123;</span><br><span class="line">      &#x27;/api&#x27;: &#123;        // 1. 对于所有以  &quot;/api&quot;　开头的url 做处理．</span><br><span class="line">        target: &#x27;http://siwei.me&#x27;,   // 3. 转发到 siwei.me 上．</span><br><span class="line">        changeOrigin: true,</span><br><span class="line">        pathRewrite: &#123;</span><br><span class="line">          &#x27;^/api&#x27;: &#x27;&#x27;  // 2. 把url中的　&quot;/api&quot; 去掉．</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;,</span><br></pre></td></tr></table></figure>
+<p><img src="https://img-blog.csdnimg.cn/20191220094106609.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9xdWVsbGFuYW4uYmxvZy5jc2RuLm5ldA==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<p>好了，我们启动看一下，<br><img src="https://img-blog.csdnimg.cn/20191220101759747.gif" alt="在这里插入图片描述"><br>后面是获取详情的，上面没有传递参数，获取详情需要传递参数，代码如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line">&lt;template&gt;</span><br><span class="line">  &lt;div &gt;</span><br><span class="line">    &lt;div&gt;</span><br><span class="line">      &lt;p&gt; 标题： &#123;&#123; blog.title &#125;&#125;  &lt;/p&gt;</span><br><span class="line">      &lt;p&gt; 发布于： &#123;&#123;blog.created_at &#125;&#125;&lt;/p&gt;</span><br><span class="line">      &lt;div&gt;</span><br><span class="line">        &lt;div v-html=&#x27;blog.body&#x27;&gt;&lt;/div&gt;</span><br><span class="line">      &lt;/div&gt;</span><br><span class="line">    &lt;/div&gt;</span><br><span class="line">  &lt;/div&gt;</span><br><span class="line">&lt;/template&gt;</span><br><span class="line"></span><br><span class="line">&lt;script&gt;</span><br><span class="line">  export default &#123;</span><br><span class="line">    data () &#123;</span><br><span class="line">      return &#123;</span><br><span class="line">        blog: &#123;&#125;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;,</span><br><span class="line">    mounted() &#123;</span><br><span class="line">      this.$http.get(&#x27;api/interface/blogs/show?id=&#x27;+this.$route.query.id).then((response) =&gt; &#123;</span><br><span class="line">        this.blog = response.body.result</span><br><span class="line">      &#125;, (response) =&gt; &#123;</span><br><span class="line">        console.error(response)</span><br><span class="line">      &#125;);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&lt;/script&gt;</span><br><span class="line"></span><br><span class="line">&lt;style scoped&gt;</span><br><span class="line"></span><br><span class="line">&lt;/style&gt;</span><br></pre></td></tr></table></figure>
+<p>这是别人的接口，好像不支持post 请求。所以post 请求就先算了，并且这种算是原生的http 请求吧，我们以后使用的时候，可以使用 axios 来发送http 请求。这个我们后面再尝试。</p>
+<h1 id="番外"><a href="#番外" class="headerlink" title="番外"></a>番外</h1><p> 这篇就讲到这吧，都是一些例子。如果要看语法的话，还得看看官网的教程。</p>
+<p> 代码上传到github：<br><a target="_blank" rel="noopener" href="https://github.com/QuellanAn/zlflovemmVue">https://github.com/QuellanAn/zlflovemmVue</a></p>
+<p>后续加油♡</p>
+<p>欢迎大家关注个人公众号 “程序员爱酸奶”</p>
+<p>分享各种学习资料，包含java，linux，大数据等。资料包含视频文档以及源码，同时分享本人及投递的优质技术博文。</p>
+<p>如果大家喜欢记得关注和分享哟❤</p>
+<p><img src="https://img-blog.csdnimg.cn/20191015213334732.jpeg?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzI3NzkwMDEx,size_16,color_FFFFFF,t_70" alt="file"></p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/vue/" rel="tag"># vue</a>
+              <a href="/tags/%E5%89%8D%E7%AB%AF/" rel="tag"># 前端</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2022/02/25/%E4%B8%89%E3%80%81Spring%20Cloud%E4%B9%8B%E8%BD%AF%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1%20Ribbon/" rel="prev" title="三、Spring Cloud之软负载均衡 Ribbon">
+                  <i class="fa fa-chevron-left"></i> 三、Spring Cloud之软负载均衡 Ribbon
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2022/02/25/%E5%8D%87%E7%BA%A7nginx%20,%E4%B8%BAnginx%E9%85%8D%E7%BD%AEhttps%E8%AF%81%E4%B9%A6/" rel="next" title="升级nginx ,为nginx配置https证书">
+                  升级nginx ,为nginx配置https证书 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">John Doe</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

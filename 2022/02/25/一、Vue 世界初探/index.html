@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.0.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.10.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
+
+  <meta name="description" content="前言我们后端用SpringBoot 框架已经搭建的差不多了之前，既然我们最初的梦想是做先后端分离的架手架，终于也开始学习一下前端的框架了。自己也算是前端小白，所以将自己学习vue 的过程记录系列博客。希望对学习vue 的小伙伴有帮助，用时文章中有不对的，希望大家及时提出一起探讨。 至于为什么要使用vue ,虽然是一个前端小白，但是还是知道当前主流的三大框架，Angular、React以及Vue .">
+<meta property="og:type" content="website">
+<meta property="og:title" content="一、Vue 世界初探">
+<meta property="og:url" content="http://example.com/2022/02/25/%E4%B8%80%E3%80%81Vue%20%E4%B8%96%E7%95%8C%E5%88%9D%E6%8E%A2/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="前言我们后端用SpringBoot 框架已经搭建的差不多了之前，既然我们最初的梦想是做先后端分离的架手架，终于也开始学习一下前端的框架了。自己也算是前端小白，所以将自己学习vue 的过程记录系列博客。希望对学习vue 的小伙伴有帮助，用时文章中有不对的，希望大家及时提出一起探讨。 至于为什么要使用vue ,虽然是一个前端小白，但是还是知道当前主流的三大框架，Angular、React以及Vue .">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20191217152520839.jpeg?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9xdWVsbGFuYW4uYmxvZy5jc2RuLm5ldA==,size_16,color_FFFFFF,t_70">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/2019121715252191.jpeg?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9xdWVsbGFuYW4uYmxvZy5jc2RuLm5ldA==,size_16,color_FFFFFF,t_70">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20191217152516658.jpeg?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9xdWVsbGFuYW4uYmxvZy5jc2RuLm5ldA==,size_16,color_FFFFFF,t_70">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20191217152521604.jpeg?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9xdWVsbGFuYW4uYmxvZy5jc2RuLm5ldA==,size_16,color_FFFFFF,t_70">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20191217152521850.jpeg?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9xdWVsbGFuYW4uYmxvZy5jc2RuLm5ldA==,size_16,color_FFFFFF,t_70">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20191217152522158.jpeg?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9xdWVsbGFuYW4uYmxvZy5jc2RuLm5ldA==,size_16,color_FFFFFF,t_70">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20191217152522446.jpeg?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9xdWVsbGFuYW4uYmxvZy5jc2RuLm5ldA==,size_16,color_FFFFFF,t_70">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20191217152522785.jpeg?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9xdWVsbGFuYW4uYmxvZy5jc2RuLm5ldA==,size_16,color_FFFFFF,t_70">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/2019121715252398.jpeg?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9xdWVsbGFuYW4uYmxvZy5jc2RuLm5ldA==,size_16,color_FFFFFF,t_70">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20191217152523389.jpeg?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9xdWVsbGFuYW4uYmxvZy5jc2RuLm5ldA==,size_16,color_FFFFFF,t_70">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20191217152520333.jpeg?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9xdWVsbGFuYW4uYmxvZy5jc2RuLm5ldA==,size_16,color_FFFFFF,t_70">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20191217152524394.jpeg?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9xdWVsbGFuYW4uYmxvZy5jc2RuLm5ldA==,size_16,color_FFFFFF,t_70">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20191217152524963.jpeg?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9xdWVsbGFuYW4uYmxvZy5jc2RuLm5ldA==,size_16,color_FFFFFF,t_70">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20191217152525749.jpeg?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9xdWVsbGFuYW4uYmxvZy5jc2RuLm5ldA==,size_16,color_FFFFFF,t_70">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20191217152520889.jpeg?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9xdWVsbGFuYW4uYmxvZy5jc2RuLm5ldA==,size_16,color_FFFFFF,t_70">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20191015213334732.jpeg?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzI3NzkwMDEx,size_16,color_FFFFFF,t_70">
+<meta property="article:published_time" content="2022-02-25T12:54:08.740Z">
+<meta property="article:modified_time" content="2022-02-25T07:14:51.294Z">
+<meta property="article:author" content="John Doe">
+<meta property="article:tag" content="vue">
+<meta property="article:tag" content="前端">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://img-blog.csdnimg.cn/20191217152520839.jpeg?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9xdWVsbGFuYW4uYmxvZy5jc2RuLm5ldA==,size_16,color_FFFFFF,t_70">
+
+
+<link rel="canonical" href="http://example.com/2022/02/25/%E4%B8%80%E3%80%81Vue%20%E4%B8%96%E7%95%8C%E5%88%9D%E6%8E%A2/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"http://example.com/2022/02/25/%E4%B8%80%E3%80%81Vue%20%E4%B8%96%E7%95%8C%E5%88%9D%E6%8E%A2/","path":"2022/02/25/一、Vue 世界初探/","title":"一、Vue 世界初探"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>一、Vue 世界初探 | Hexo</title>
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Hexo</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%89%8D%E8%A8%80"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%AD%A6%E4%B9%A0%E5%9C%B0%E5%9D%80"><span class="nav-number">2.</span> <span class="nav-text">学习地址</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%AE%89%E8%A3%85"><span class="nav-number">3.</span> <span class="nav-text">安装</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#IDEA-%E9%85%8D%E7%BD%AEvue"><span class="nav-number">4.</span> <span class="nav-text">IDEA 配置vue</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%A1%B9%E7%9B%AE%E7%BB%93%E6%9E%84"><span class="nav-number">5.</span> <span class="nav-text">项目结构</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#build"><span class="nav-number">5.1.</span> <span class="nav-text">build</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#config"><span class="nav-number">5.2.</span> <span class="nav-text">config</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#node-modules"><span class="nav-number">5.3.</span> <span class="nav-text">node_modules</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#src"><span class="nav-number">5.4.</span> <span class="nav-text">src</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Hello-World"><span class="nav-number">6.</span> <span class="nav-text">Hello World</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Hello-vue"><span class="nav-number">6.1.</span> <span class="nav-text">Hello.vue</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BF%AE%E6%94%B9index-js"><span class="nav-number">6.2.</span> <span class="nav-text">修改index.js</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%90%AF%E5%8A%A8"><span class="nav-number">6.3.</span> <span class="nav-text">启动</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%95%AA%E5%A4%96"><span class="nav-number">7.</span> <span class="nav-text">番外</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">John Doe</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">54</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+        <span class="site-state-item-count">13</span>
+        <span class="site-state-item-name">categories</span>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">35</span>
+        <span class="site-state-item-name">tags</span>
+      </div>
+  </nav>
+</div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2022/02/25/%E4%B8%80%E3%80%81Vue%20%E4%B8%96%E7%95%8C%E5%88%9D%E6%8E%A2/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="John Doe">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          一、Vue 世界初探
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+      
+
+      <time title="Created: 2022-02-25 20:54:08 / Modified: 15:14:51" itemprop="dateCreated datePublished" datetime="2022-02-25T20:54:08+08:00">2022-02-25</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/vue/" itemprop="url" rel="index"><span itemprop="name">vue</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>我们后端用SpringBoot 框架已经搭建的差不多了之前，既然我们最初的梦想是做先后端分离的架手架，终于也开始学习一下前端的框架了。自己也算是前端小白，所以将自己学习vue 的过程记录系列博客。希望对学习vue 的小伙伴有帮助，用时文章中有不对的，希望大家及时提出一起探讨。</p>
+<p>至于为什么要使用vue ,虽然是一个前端小白，但是还是知道当前主流的三大框架，Angular、React以及Vue .优劣我就不说了，我就说说我为什么选择vue 吧。其实还是因为毕竟是后端开发，对前端的东西不要求深入理解，做到能用能复制就好了。所以基本上是本着最小学习成本来的。所以相对Angular 和React来说，vue 算是上手最快的，所以也就入坑了。自己话了一周的时间预研，勉强算自己入门了吧，所以才开始写博客记录下来，这样也算是对自己学习的内容的整理，也可以记录下来方便大家。</p>
+<h1 id="学习地址"><a href="#学习地址" class="headerlink" title="学习地址"></a>学习地址</h1><p>想要了解vue 是什么， 怎么学习？我也是参考网上的资料学习的。</p>
+<p>vue.js 的官网：<a target="_blank" rel="noopener" href="https://cn.vuejs.org/v2/guide/">https://cn.vuejs.org/v2/guide/</a></p>
+<p>菜鸟教程：<a target="_blank" rel="noopener" href="https://www.runoob.com/vue2/vue-tutorial.html">https://www.runoob.com/vue2/vue-tutorial.html</a></p>
+<p>gitBook: <a target="_blank" rel="noopener" href="http://vue_book.siwei.me/preface.html">http://vue_book.siwei.me/preface.html</a></p>
+<p>自己感觉官网上和菜鸟教程上，对自己的作用只是熟悉的了vue的语法，不足以我来搭建在项目中使用，但是又不能不看，不然基本的语法都不知道，怎么开展下一步。上面的gitBook 算是带我入门的，我也在网上找了很多资料，但是跟着gitBook一步步实现起来，整体流程算是清楚了，所以也推荐大家。自己记录这系列博客，也算自己vue入门吧，有不对的地方大家多多指教。</p>
+<h1 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h1><p>好啦，说了这么多，我们正式开始吧。<br>我们直接使用vue-cli .当然大家亦可以使用其他的。我们首先电脑上 npm和git 并配置邮箱 ,至于怎么安装，网上有很多教程，这里就不说了，安装好之后，我们需要安装vue-cli 。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm install vue vue-cli -g </span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img-blog.csdnimg.cn/20191217152520839.jpeg?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9xdWVsbGFuYW4uYmxvZy5jc2RuLm5ldA==,size_16,color_FFFFFF,t_70" alt="file"></p>
+<p>安装好之后，我们控制台我们想要创建项目的目录执行：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vue init webpack zlflovemmVue</span><br></pre></td></tr></table></figure>
+<p><img src="https://img-blog.csdnimg.cn/2019121715252191.jpeg?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9xdWVsbGFuYW4uYmxvZy5jc2RuLm5ldA==,size_16,color_FFFFFF,t_70" alt="file"><br><img src="https://img-blog.csdnimg.cn/20191217152516658.jpeg?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9xdWVsbGFuYW4uYmxvZy5jc2RuLm5ldA==,size_16,color_FFFFFF,t_70" alt="file"></p>
+<p>这样就可以看到项目已经初始化成功了。我们现在用IDEA 打开这个项目，当然大家也可以用其他的，后端的用惯了idea ,所以也就用idea 来开发vue 啦。</p>
+<h1 id="IDEA-配置vue"><a href="#IDEA-配置vue" class="headerlink" title="IDEA 配置vue"></a>IDEA 配置vue</h1><p>我们既然使用idea,当然需要一些配置，不使用idea 的可以忽略。<br>1、我们打开settings 下载vue.js 插件，然后重启。打开我们创建的项目zlflovemmVue<br><img src="https://img-blog.csdnimg.cn/20191217152521604.jpeg?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9xdWVsbGFuYW4uYmxvZy5jc2RuLm5ldA==,size_16,color_FFFFFF,t_70" alt="file"></p>
+<p>2、配置js 版本 ECMAScript6<br><img src="https://img-blog.csdnimg.cn/20191217152521850.jpeg?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9xdWVsbGFuYW4uYmxvZy5jc2RuLm5ldA==,size_16,color_FFFFFF,t_70" alt="file"></p>
+<p>3、HTML 增加 .vue 支持<br><img src="https://img-blog.csdnimg.cn/20191217152522158.jpeg?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9xdWVsbGFuYW4uYmxvZy5jc2RuLm5ldA==,size_16,color_FFFFFF,t_70" alt="file"></p>
+<p>4、启动项目，在edit Configurations 中增加npm 启动，配置如下图：<br><img src="https://img-blog.csdnimg.cn/20191217152522446.jpeg?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9xdWVsbGFuYW4uYmxvZy5jc2RuLm5ldA==,size_16,color_FFFFFF,t_70" alt="file"></p>
+<p> 配置好后，我们来启动就好啦，如下图就表示启动成功啦。<br> <img src="https://img-blog.csdnimg.cn/20191217152522785.jpeg?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9xdWVsbGFuYW4uYmxvZy5jc2RuLm5ldA==,size_16,color_FFFFFF,t_70" alt="file"><br> 我们启动成后，在浏览器上输入：<br> <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://localhost:8081</span><br></pre></td></tr></table></figure><br> <img src="https://img-blog.csdnimg.cn/2019121715252398.jpeg?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9xdWVsbGFuYW4uYmxvZy5jc2RuLm5ldA==,size_16,color_FFFFFF,t_70" alt="file"></p>
+<p> 证明我们项目已经初始化搭建完成啦。到这里我们已经完成了第一步。但是可以看到我们到现在为止还没有开始写代码，也不知道如何下手写。</p>
+<p> 不要急，我们前面这些工作做好后，我们接下来就开始啦。</p>
+<h1 id="项目结构"><a href="#项目结构" class="headerlink" title="项目结构"></a>项目结构</h1><p> 虽然我们项目稀里糊涂的启动起来了，但是相比到此的小伙伴还是一头雾水，在那写我们的代码呢？整个流程是怎么样的呢？<br>在写代码之前，我们还是先来看看，vue-cli 初始化为我们创建的项目有哪些东西。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">▸ build/                // 编译用到的脚本</span><br><span class="line">▸ config/               // 各种配置</span><br><span class="line">▸ dist/                 // 打包后的文件夹</span><br><span class="line">▸ node_modules/         // node第三方包</span><br><span class="line">▸ src/                  // 源代码</span><br><span class="line">▸ static/               // 静态文件, 暂时无用</span><br><span class="line">  index.html            // 最外层文件</span><br><span class="line">  package.json          // node项目配置文件</span><br></pre></td></tr></table></figure>
+<p><img src="https://img-blog.csdnimg.cn/20191217152523389.jpeg?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9xdWVsbGFuYW4uYmxvZy5jc2RuLm5ldA==,size_16,color_FFFFFF,t_70" alt="file"></p>
+<h2 id="build"><a href="#build" class="headerlink" title="build"></a>build</h2><p>保留各种打包脚本。不可或缺，不要随意修改。</p>
+<p>展开后如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">▾ build/</span><br><span class="line">    build.js                  //打包使用， 不要修改。</span><br><span class="line">    check-versions.js        //检查npm的版本， 不要修改。</span><br><span class="line">    dev-client.js            //是在开发时使用的服务器脚本。不要修改。</span><br><span class="line">    dev-server.js           //同上</span><br><span class="line">    utils.js                // 不要修改。 做一些css/sass 等文件的生成。</span><br><span class="line">    vue-loader.conf.js     //非常重要的配置文件，不要修改。内容是用来辅助加载vuejs用到的css source map等内容。</span><br><span class="line">    webpack.base.conf.js     //下面这三个都是基本的配置文件。不要修改</span><br><span class="line">    webpack.dev.conf.js</span><br><span class="line">    webpack.prod.conf.js</span><br></pre></td></tr></table></figure>
+<p>我们初学者阶段，暂时不用管这些，也不改这些东西。</p>
+<h2 id="config"><a href="#config" class="headerlink" title="config"></a>config</h2><p>上图我们可以看到config 目录中就有</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">▾ config/</span><br><span class="line">    dev.env.js</span><br><span class="line">    index.js</span><br><span class="line">    prod.env.js</span><br><span class="line">		test.env.js</span><br></pre></td></tr></table></figure>
+<p>dev.env.js 开发模式下的配置文件，一般不用修改。<br>prod.env.js 生产模式下的配置文件，一般不用修改。<br>test.env.js 测试模式下的配置文件，一般不用修改。<br>index.js 很重要的文件， 定义了 开发时的端口（默认是8080），定义了图片文件夹（默认static)， 定义了开发模式下的 代理服务器. 我们修改的还是比较多的。</p>
+<h2 id="node-modules"><a href="#node-modules" class="headerlink" title="node_modules"></a>node_modules</h2><p>node项目所用到的第三方包，特别多，特别大。 $ npm install 所产生。<br>这个文件夹不要放到git中</p>
+<h2 id="src"><a href="#src" class="headerlink" title="src"></a>src</h2><p>最最核心的源代码所在的目录。我们要写的代码就是写在这个里面啦。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">▾ src/</span><br><span class="line">  ▾ assets/</span><br><span class="line">      logo.png</span><br><span class="line">  ▾ components/</span><br><span class="line">      Hello.vue</span><br><span class="line">  ▾ router/</span><br><span class="line">      index.js</span><br><span class="line">    App.vue</span><br><span class="line">    main.js</span><br></pre></td></tr></table></figure>
+<p>assets: 用到的图片</p>
+<p>components: 用到的”视图”和”组件”所在的文件夹。（最最核心）</p>
+<p>router&#x2F;index.js 路由文件。 定义了各个页面对应的url.</p>
+<p>App.vue 如果index.html 是一级页面模板的话，这个App.vue就是二级页面模板。 所有的其他vuejs页面，都作为该模板的 一部分被渲染出来。</p>
+<p>main.js 废代码。没有实际意义，但是为了支撑整个vuejs框架，存在很必要。</p>
+<h1 id="Hello-World"><a href="#Hello-World" class="headerlink" title="Hello World"></a>Hello World</h1><p>好啦，我们已经知道了项目的结构了，现在就要开始实现我们自己的hello world 啦。不然我们当程序员还有什么意义。<br>其实我们程序已经帮我们写了一个helloworld 。但是我们还是自己来创建一个，这样自己才能熟悉点。最终添加的内容图如下：</p>
+<p><img src="https://img-blog.csdnimg.cn/20191217152520333.jpeg?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9xdWVsbGFuYW4uYmxvZy5jc2RuLm5ldA==,size_16,color_FFFFFF,t_70" alt="file"></p>
+<h2 id="Hello-vue"><a href="#Hello-vue" class="headerlink" title="Hello.vue"></a>Hello.vue</h2><p>我们在src–components 新建Hello.vue 。内容如下:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">&lt;template&gt;</span><br><span class="line">  &lt;div&gt;</span><br><span class="line">    &#123;&#123;message&#125;&#125;</span><br><span class="line">  &lt;/div&gt;</span><br><span class="line">&lt;/template&gt;</span><br><span class="line"></span><br><span class="line">&lt;script&gt;</span><br><span class="line">    export default &#123;</span><br><span class="line">        data()&#123;</span><br><span class="line">          return &#123;</span><br><span class="line">            message: &quot;hello world&quot;</span><br><span class="line">          &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&lt;/style&gt;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>可以看到内容很简单，就是返回一个hello world 。</p>
+<h2 id="修改index-js"><a href="#修改index-js" class="headerlink" title="修改index.js"></a>修改index.js</h2><p>接下来我们在src–router–index.js 中增加一个路由。</p>
+<p><img src="https://img-blog.csdnimg.cn/20191217152524394.jpeg?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9xdWVsbGFuYW4uYmxvZy5jc2RuLm5ldA==,size_16,color_FFFFFF,t_70" alt="file"></p>
+<h2 id="启动"><a href="#启动" class="headerlink" title="启动"></a>启动</h2><p>这样的话我们就可以来启动项目啦。启动的时候报这种错误：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">✘  http://eslint.org/docs/rules/indent  </span><br></pre></td></tr></table></figure>
+<p><img src="https://img-blog.csdnimg.cn/20191217152524963.jpeg?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9xdWVsbGFuYW4uYmxvZy5jc2RuLm5ldA==,size_16,color_FFFFFF,t_70" alt="file"></p>
+<p>启用eslint检测不通过导致的，我们这里的解决办法：</p>
+<p> 在build&#x2F;webpack.base.conf.js文件中，注释config.dev.useEslint?这行配置，然后重启项目就好了。<br> <img src="https://img-blog.csdnimg.cn/20191217152525749.jpeg?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9xdWVsbGFuYW4uYmxvZy5jc2RuLm5ldA==,size_16,color_FFFFFF,t_70" alt="file"></p>
+<p> 启动之后，我们在界面上输入：<br> <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://localhost:8081/#/hello</span><br></pre></td></tr></table></figure><br> <img src="https://img-blog.csdnimg.cn/20191217152520889.jpeg?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9xdWVsbGFuYW4uYmxvZy5jc2RuLm5ldA==,size_16,color_FFFFFF,t_70" alt="file"></p>
+<p> 这里我们的hello world 出来了，但是我们可能会感觉到奇怪，我们只是仅仅写了helloworld 为什么还有logo ,并且还有居中的样式。我们这个问题留在下篇文章接着将。这里我们先记着。</p>
+<h1 id="番外"><a href="#番外" class="headerlink" title="番外"></a>番外</h1><p> 到此为止，我们也算是将vue安装成功了，并运行一个非常简单的例子。</p>
+<p> 代码上传到github：<br><a target="_blank" rel="noopener" href="https://github.com/QuellanAn/zlflovemmVue">https://github.com/QuellanAn/zlflovemmVue</a></p>
+<p>后续加油♡</p>
+<p>欢迎大家关注个人公众号 “程序员爱酸奶”</p>
+<p>分享各种学习资料，包含java，linux，大数据等。资料包含视频文档以及源码，同时分享本人及投递的优质技术博文。</p>
+<p>如果大家喜欢记得关注和分享哟❤</p>
+<p><img src="https://img-blog.csdnimg.cn/20191015213334732.jpeg?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzI3NzkwMDEx,size_16,color_FFFFFF,t_70" alt="file"></p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/vue/" rel="tag"># vue</a>
+              <a href="/tags/%E5%89%8D%E7%AB%AF/" rel="tag"># 前端</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2022/02/25/%E4%BA%94%E3%80%81springboot%20%E7%AE%80%E5%8D%95%E4%BC%98%E9%9B%85%E6%98%AF%E5%AE%9E%E7%8E%B0%E9%82%AE%E4%BB%B6%E6%9C%8D%E5%8A%A1/" rel="prev" title="五、springboot 简单优雅是实现邮件服务">
+                  <i class="fa fa-chevron-left"></i> 五、springboot 简单优雅是实现邮件服务
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2022/02/25/%E3%80%8A%E5%89%91%E6%8C%87offer%E3%80%8B%E4%B9%8B%E4%BB%8E%E4%B8%8A%E5%BE%80%E4%B8%8B%E6%89%93%E5%8D%B0%E4%BA%8C%E5%8F%89%E6%A0%91/" rel="next" title="《剑指offer》之从上往下打印二叉树">
+                  《剑指offer》之从上往下打印二叉树 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">John Doe</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

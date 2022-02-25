@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.0.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.10.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
+
+  <meta name="description" content="前言上篇讲了我们如何安装docker，现在该我们一展拳脚的时候了。接下来让我们一起学习一下docker常见的操作，让我们能够会使用 docker。 基本概念在讲使用之前，还是先将一下docker 的基本概念，毕竟上篇就讲了docker 的安装。一些基本的名词还是需要了解一下的。docker 最重要的就是镜像和容器了，还有一个仓库。 那什么是docker 镜像呢？  docker 镜像就相当于一个">
+<meta property="og:type" content="website">
+<meta property="og:title" content="二、docker 镜像容器常用操作(让我们用docker 溜得飞起)">
+<meta property="og:url" content="http://example.com/2022/02/25/%E4%BA%8C%E3%80%81docker%20%E9%95%9C%E5%83%8F%E5%AE%B9%E5%99%A8%E5%B8%B8%E7%94%A8%E6%93%8D%E4%BD%9C(%E8%AE%A9%E6%88%91%E4%BB%AC%E7%94%A8docker%20%E6%BA%9C%E5%BE%97%E9%A3%9E%E8%B5%B7)/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="前言上篇讲了我们如何安装docker，现在该我们一展拳脚的时候了。接下来让我们一起学习一下docker常见的操作，让我们能够会使用 docker。 基本概念在讲使用之前，还是先将一下docker 的基本概念，毕竟上篇就讲了docker 的安装。一些基本的名词还是需要了解一下的。docker 最重要的就是镜像和容器了，还有一个仓库。 那什么是docker 镜像呢？  docker 镜像就相当于一个">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20191022172419183.jpeg">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20191022172419421.jpeg">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20191022172419766.jpeg?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzI3NzkwMDEx,size_16,color_FFFFFF,t_70">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/2019102217242068.jpeg?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzI3NzkwMDEx,size_16,color_FFFFFF,t_70">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20191022172420349.jpeg">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20191022172419372.jpeg">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20191022172420923.jpeg?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzI3NzkwMDEx,size_16,color_FFFFFF,t_70">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20191022172421213.jpeg">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20191022172421446.jpeg">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20191022172421768.jpeg">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20191022172421990.jpeg">
+<meta property="og:image" content="https://imgconvert.csdnimg.cn/aHR0cHM6Ly9ncmFwaC5iYWlkdS5jb20vcmVzb3VyY2UvMjEyYzc1MjZhNDhlMjBhZTU4YjhjMDE1Njg5MDE3NDYucG5n?x-oss-process=image/format,png">
+<meta property="article:published_time" content="2022-02-25T12:54:08.431Z">
+<meta property="article:modified_time" content="2022-02-25T07:14:51.583Z">
+<meta property="article:author" content="John Doe">
+<meta property="article:tag" content="docker">
+<meta property="article:tag" content="linux">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://img-blog.csdnimg.cn/20191022172419183.jpeg">
+
+
+<link rel="canonical" href="http://example.com/2022/02/25/%E4%BA%8C%E3%80%81docker%20%E9%95%9C%E5%83%8F%E5%AE%B9%E5%99%A8%E5%B8%B8%E7%94%A8%E6%93%8D%E4%BD%9C(%E8%AE%A9%E6%88%91%E4%BB%AC%E7%94%A8docker%20%E6%BA%9C%E5%BE%97%E9%A3%9E%E8%B5%B7)/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"http://example.com/2022/02/25/%E4%BA%8C%E3%80%81docker%20%E9%95%9C%E5%83%8F%E5%AE%B9%E5%99%A8%E5%B8%B8%E7%94%A8%E6%93%8D%E4%BD%9C(%E8%AE%A9%E6%88%91%E4%BB%AC%E7%94%A8docker%20%E6%BA%9C%E5%BE%97%E9%A3%9E%E8%B5%B7)/","path":"2022/02/25/二、docker 镜像容器常用操作(让我们用docker 溜得飞起)/","title":"二、docker 镜像容器常用操作(让我们用docker 溜得飞起)"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>二、docker 镜像容器常用操作(让我们用docker 溜得飞起) | Hexo</title>
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Hexo</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%89%8D%E8%A8%80"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5"><span class="nav-number">2.</span> <span class="nav-text">基本概念</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%95%9C%E5%83%8F%E7%9A%84%E4%BD%BF%E7%94%A8"><span class="nav-number">3.</span> <span class="nav-text">镜像的使用</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%8B%E8%BD%BD%E9%95%9C%E5%83%8F"><span class="nav-number">3.1.</span> <span class="nav-text">下载镜像</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9F%A5%E8%AF%A2%E9%95%9C%E5%83%8F"><span class="nav-number">3.2.</span> <span class="nav-text">查询镜像</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%A0%E9%99%A4%E9%95%9C%E5%83%8F"><span class="nav-number">3.3.</span> <span class="nav-text">删除镜像</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%AE%B9%E5%99%A8%E7%9A%84%E4%BD%BF%E7%94%A8"><span class="nav-number">4.</span> <span class="nav-text">容器的使用</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%9B%E5%BB%BA%E5%92%8C%E5%90%AF%E5%8A%A8"><span class="nav-number">4.1.</span> <span class="nav-text">创建和启动</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BB%88%E6%AD%A2%E5%AE%B9%E5%99%A8"><span class="nav-number">4.2.</span> <span class="nav-text">终止容器</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9F%A5%E7%9C%8B%E5%AE%B9%E5%99%A8"><span class="nav-number">4.3.</span> <span class="nav-text">查看容器</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%87%8D%E5%90%AF%E5%AE%B9%E5%99%A8"><span class="nav-number">4.4.</span> <span class="nav-text">重启容器</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%A0%E9%99%A4%E5%AE%B9%E5%99%A8"><span class="nav-number">4.5.</span> <span class="nav-text">删除容器</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%95%AA%E5%A4%96"><span class="nav-number">5.</span> <span class="nav-text">番外</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">John Doe</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">54</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+        <span class="site-state-item-count">13</span>
+        <span class="site-state-item-name">categories</span>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">35</span>
+        <span class="site-state-item-name">tags</span>
+      </div>
+  </nav>
+</div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2022/02/25/%E4%BA%8C%E3%80%81docker%20%E9%95%9C%E5%83%8F%E5%AE%B9%E5%99%A8%E5%B8%B8%E7%94%A8%E6%93%8D%E4%BD%9C(%E8%AE%A9%E6%88%91%E4%BB%AC%E7%94%A8docker%20%E6%BA%9C%E5%BE%97%E9%A3%9E%E8%B5%B7)/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="John Doe">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          二、docker 镜像容器常用操作(让我们用docker 溜得飞起)
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+      
+
+      <time title="Created: 2022-02-25 20:54:08 / Modified: 15:14:51" itemprop="dateCreated datePublished" datetime="2022-02-25T20:54:08+08:00">2022-02-25</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/docker/" itemprop="url" rel="index"><span itemprop="name">docker</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>上篇讲了我们如何安装docker，现在该我们一展拳脚的时候了。接下来让我们一起学习一下docker常见的操作，让我们能够会使用 docker。</p>
+<h1 id="基本概念"><a href="#基本概念" class="headerlink" title="基本概念"></a>基本概念</h1><p>在讲使用之前，还是先将一下docker 的基本概念，毕竟上篇就讲了docker 的安装。一些基本的名词还是需要了解一下的。<br>docker 最重要的就是镜像和容器了，还有一个仓库。</p>
+<p>那什么是docker 镜像呢？ </p>
+<p>docker 镜像就相当于一个 root 文件系统，不仅包含容器运行的程序和资源，还包含运行依赖的配置。但是镜像不包含任何动态的数据。</p>
+<p>通俗的来讲就像是我们项目运行需要各种依赖和配置以及各种部署。然后我们将这些环境和程序都打包在一起，形成一个可以直接运行的包。就相当于是docker镜像，将所有需要的环境都集成在一起。在哪都可以运行。</p>
+<p>docker 镜像是分层存储的。docker镜像在构建的时候是一层层构建的前一层是后一层的基础，使得镜像在复用、定制变得更加简单。也由于镜像是分层存储的，所以镜像显示的size 大小并不是实际占用的物理内存。因为有很多中间镜像都是公用的。所以实际占用的内存会比显示的size要小。</p>
+<p><img src="https://img-blog.csdnimg.cn/20191022172419183.jpeg" alt="file"></p>
+<p>查看容器实际的占用的内存使用</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker  system df</span><br></pre></td></tr></table></figure>
+<p><img src="https://img-blog.csdnimg.cn/20191022172419421.jpeg" alt="file"></p>
+<p>现在知道镜像了，那镜像怎么使用呢？</p>
+<p>那就是通过容器啦，容器和镜像的关系就像是 对象和实例的关系。也就是说根据镜像创建一个可以直接运行的容器。容器是镜像的具体体现，所以容器就有创建，启动，停止，删除等操作。</p>
+<h1 id="镜像的使用"><a href="#镜像的使用" class="headerlink" title="镜像的使用"></a>镜像的使用</h1><p>好了，前面知道了什么是docker 镜像和容器，那现在就我们来看看怎么使用他们吧。</p>
+<h2 id="下载镜像"><a href="#下载镜像" class="headerlink" title="下载镜像"></a>下载镜像</h2><p>我们安装好docker 后，怎么获取镜像呢？和git 拉取一样也是使用pull.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker pull </span><br></pre></td></tr></table></figure>
+<p>详细的参数使用可以通过<code>docker pull --help </code>来查看</p>
+<p>比如我们现在下载一个nginx的景象</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker pull nginx</span><br></pre></td></tr></table></figure>
+<p>默认会下载latest 的镜像，表示下载最新的镜像。也可以下载稳定版本的，或者下载指定版本的。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">docker pull nginx:stable</span><br><span class="line"></span><br><span class="line">docker pull nginx:1.16</span><br></pre></td></tr></table></figure>
+<p><img src="https://img-blog.csdnimg.cn/20191022172419766.jpeg?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzI3NzkwMDEx,size_16,color_FFFFFF,t_70" alt="file"></p>
+<h2 id="查询镜像"><a href="#查询镜像" class="headerlink" title="查询镜像"></a>查询镜像</h2><p>我们镜像下载下来了，我们怎么查看我们电脑上有哪些镜像呢？<br>其实上面我已经用了</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">docker image ls </span><br><span class="line">或者</span><br><span class="line">docker images 两者的效果是一样的。</span><br></pre></td></tr></table></figure>
+<p>具体使用一样的可以使用<code>docker image --help</code>。我们接下来将我们常用的。<br>查询显示虚悬镜像</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker images -f dangling=true</span><br></pre></td></tr></table></figure>
+<p>虚悬镜像是没有作用的，占用内存空间，虚悬镜像怎么来呢？一般是我们下载镜像，依赖一些中间镜像，然后我们删除了下载的镜像，但是只是删除了上层镜像，依赖的镜像没有删除。这样没有依赖的中间镜像就成了虚悬镜像，是可以删除的。</p>
+<p>删除虚悬镜像</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker image prune</span><br></pre></td></tr></table></figure>
+<p>其他的一些查询操作。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">#列出中间层镜像</span><br><span class="line">docker images -a</span><br><span class="line">#列出部分镜像</span><br><span class="line">docker images 仓库名</span><br><span class="line"></span><br><span class="line">#过滤</span><br><span class="line">docker images -f since=仓库名</span><br><span class="line">docker images -f before=仓库名</span><br></pre></td></tr></table></figure>
+
+
+<h2 id="删除镜像"><a href="#删除镜像" class="headerlink" title="删除镜像"></a>删除镜像</h2><p>我们现在知道怎么拉取镜像，以及在本地查看镜像，那我们想要删除镜像怎么删除呢？</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker image rm 镜像id</span><br></pre></td></tr></table></figure>
+<p>我们可以通过镜像id 来删除镜像，并且不用完整的镜像id ,只要可以做唯一区分就好了。<br><img src="https://img-blog.csdnimg.cn/2019102217242068.jpeg?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzI3NzkwMDEx,size_16,color_FFFFFF,t_70" alt="file"></p>
+<p>除了通过镜像id 来删除镜像，还可以通过以下的几种方式来删除，更过的可以通过<code>docker image rm --help</code>来查看</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"># 删除所有仓库名为***的镜像</span><br><span class="line">docker image rm $(docker images -q 仓库名)</span><br><span class="line"></span><br><span class="line"># 删除仓库名在***之前的镜像</span><br><span class="line">docker image rm $(docker images -q -f before=仓库名)</span><br></pre></td></tr></table></figure>
+
+<h1 id="容器的使用"><a href="#容器的使用" class="headerlink" title="容器的使用"></a>容器的使用</h1><p>上面讲了镜像的获取查看删除操作，那我们怎么根据镜像来操作相关的容器呢？</p>
+<h2 id="创建和启动"><a href="#创建和启动" class="headerlink" title="创建和启动"></a>创建和启动</h2><p>前面说了镜像和容器的关系就像是对象和实例的关系。我们一般使用都是使用实例，一样的我们docker使用也是使用docker容器。<br>那我们怎么根据镜像来创建容器并使用它呢？<br>使用</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run  </span><br></pre></td></tr></table></figure>
+<p>比如我们前面下载了那么多Nginx，我们现在启动你nginx 试试。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run -p 8080:80 nginx:stable</span><br></pre></td></tr></table></figure>
+<p>-p 是用来指定映射端口的，8080是我们设置访问那个端口，80 是Nginx本身的端口。也可以后台启动</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run -d -p 8180:80 nginx:stable</span><br></pre></td></tr></table></figure>
+<p>设置容器name</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run --name myNginx -d -p 8280:80 nginx:stable </span><br></pre></td></tr></table></figure>
+<p><img src="https://img-blog.csdnimg.cn/20191022172420349.jpeg" alt="file"></p>
+<p><img src="https://img-blog.csdnimg.cn/20191022172419372.jpeg" alt="file"></p>
+<p>我们现在在浏览器上访问一下8080，8081，8082这几个端口，应该都可以访问的。<br><img src="https://img-blog.csdnimg.cn/20191022172420923.jpeg?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzI3NzkwMDEx,size_16,color_FFFFFF,t_70" alt="file"></p>
+<h2 id="终止容器"><a href="#终止容器" class="headerlink" title="终止容器"></a>终止容器</h2><p>上面的容器启动了，我们现在想要停止容器，我们该怎么做呢？<br>如果我们没有后台启动，想要终止容器的话，直接Ctrl C 就可以退出来。如果我们是后台启动的，我们就需要通过</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker container stop 容器id</span><br></pre></td></tr></table></figure>
+<p><img src="https://img-blog.csdnimg.cn/20191022172421213.jpeg" alt="file"><br>可以看到，删除的时候一样的不需要完整的id ,只要可以唯一区分就可以。</p>
+<h2 id="查看容器"><a href="#查看容器" class="headerlink" title="查看容器"></a>查看容器</h2><p>其实上面已经用到了如何查询容器。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker container ls</span><br></pre></td></tr></table></figure>
+<p>这个是查看正运行的容器。查看所有容器使用</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker containe la -a </span><br></pre></td></tr></table></figure>
+<p>更多的命令可以查看</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker container ls --help</span><br></pre></td></tr></table></figure>
+<p><img src="https://img-blog.csdnimg.cn/20191022172421446.jpeg" alt="file"><br>上图可以看到我已经停止了三个Nginx容器。用 -a 才会显示。 </p>
+<h2 id="重启容器"><a href="#重启容器" class="headerlink" title="重启容器"></a>重启容器</h2><p>我们又想将关的容器重新启动，那怎么做</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">docker container start 容器id</span><br><span class="line"></span><br><span class="line">#重启运行中的容器</span><br><span class="line">docker container restart 容器id</span><br></pre></td></tr></table></figure>
+<p><img src="https://img-blog.csdnimg.cn/20191022172421768.jpeg" alt="file"></p>
+<h2 id="删除容器"><a href="#删除容器" class="headerlink" title="删除容器"></a>删除容器</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">docker container rm 容器id</span><br><span class="line"></span><br><span class="line"># 删除运行中的容器</span><br><span class="line">docker container -f  容器id</span><br><span class="line"></span><br><span class="line"># 删除所有没有运行的容器</span><br><span class="line">docker container prune</span><br></pre></td></tr></table></figure>
+<p><img src="https://img-blog.csdnimg.cn/20191022172421990.jpeg" alt="file"></p>
+<h1 id="番外"><a href="#番外" class="headerlink" title="番外"></a>番外</h1><p>到此为止，我们常用的镜像和容器的操作就会使用啦。都是一些命令。忘记的可以–help 查看一下。</p>
+<p>好了，就说这么多啦</p>
+<p>后续加油♡</p>
+<p>欢迎大家关注个人公众号 “程序员爱酸奶”</p>
+<p>分享各种学习资料，包含java，linux，大数据等。资料包含视频文档以及源码，同时分享本人及投递的优质技术博文。</p>
+<p>如果大家喜欢记得关注和分享哟❤<br><img src="https://imgconvert.csdnimg.cn/aHR0cHM6Ly9ncmFwaC5iYWlkdS5jb20vcmVzb3VyY2UvMjEyYzc1MjZhNDhlMjBhZTU4YjhjMDE1Njg5MDE3NDYucG5n?x-oss-process=image/format,png" alt="file"></p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/docker/" rel="tag"># docker</a>
+              <a href="/tags/linux/" rel="tag"># linux</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2022/02/25/%E8%B0%83%E7%AC%AC%E4%B8%89%E6%96%B9%E5%8E%82%E5%AE%B6%E6%8E%A5%E5%8F%A3%E5%AE%9E%E7%8E%B0%E6%96%87%E4%BB%B6%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0httpclient/" rel="prev" title="调第三方厂家接口实现文件文件上传httpclient">
+                  <i class="fa fa-chevron-left"></i> 调第三方厂家接口实现文件文件上传httpclient
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2022/02/25/%E4%BA%8C%E3%80%81Spring%20Cloud%E4%B9%8B%E6%B3%A8%E5%86%8C%E4%B8%AD%E5%BF%83%20Eureka/" rel="next" title="二、Spring Cloud之注册中心 Eureka">
+                  二、Spring Cloud之注册中心 Eureka <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">John Doe</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

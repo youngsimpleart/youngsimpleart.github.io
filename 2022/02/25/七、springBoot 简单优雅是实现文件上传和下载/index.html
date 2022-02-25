@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.0.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.10.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
+
+  <meta name="description" content="前言好久没有更新spring Boot 这个项目了。最近看了一下docker 的知识，后期打算将spring boot 和docker 结合起来。刚好最近有一个上传文件的工作呢，刚好就想起这个脚手架，将文件上传和下载整理进来。 配置在application.properties 中增加上传文件存放的路径配置 12#文件上传目录file.upload.url&#x3D;E:&#x2F;test  controller">
+<meta property="og:type" content="website">
+<meta property="og:title" content="七、springBoot 简单优雅是实现文件上传和下载">
+<meta property="og:url" content="http://example.com/2022/02/25/%E4%B8%83%E3%80%81springBoot%20%E7%AE%80%E5%8D%95%E4%BC%98%E9%9B%85%E6%98%AF%E5%AE%9E%E7%8E%B0%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E5%92%8C%E4%B8%8B%E8%BD%BD/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="前言好久没有更新spring Boot 这个项目了。最近看了一下docker 的知识，后期打算将spring boot 和docker 结合起来。刚好最近有一个上传文件的工作呢，刚好就想起这个脚手架，将文件上传和下载整理进来。 配置在application.properties 中增加上传文件存放的路径配置 12#文件上传目录file.upload.url&#x3D;E:&#x2F;test  controller">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20191028180801278.jpeg?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzI3NzkwMDEx,size_16,color_FFFFFF,t_70">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20191028180801508.jpeg?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzI3NzkwMDEx,size_16,color_FFFFFF,t_70">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20191028180801787.jpeg">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20191028180800424.jpeg?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzI3NzkwMDEx,size_16,color_FFFFFF,t_70">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20191015213334732.jpeg?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzI3NzkwMDEx,size_16,color_FFFFFF,t_70">
+<meta property="article:published_time" content="2022-02-25T12:54:08.544Z">
+<meta property="article:modified_time" content="2022-02-25T07:14:51.398Z">
+<meta property="article:author" content="John Doe">
+<meta property="article:tag" content="springboot">
+<meta property="article:tag" content="java">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://img-blog.csdnimg.cn/20191028180801278.jpeg?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzI3NzkwMDEx,size_16,color_FFFFFF,t_70">
+
+
+<link rel="canonical" href="http://example.com/2022/02/25/%E4%B8%83%E3%80%81springBoot%20%E7%AE%80%E5%8D%95%E4%BC%98%E9%9B%85%E6%98%AF%E5%AE%9E%E7%8E%B0%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E5%92%8C%E4%B8%8B%E8%BD%BD/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"http://example.com/2022/02/25/%E4%B8%83%E3%80%81springBoot%20%E7%AE%80%E5%8D%95%E4%BC%98%E9%9B%85%E6%98%AF%E5%AE%9E%E7%8E%B0%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E5%92%8C%E4%B8%8B%E8%BD%BD/","path":"2022/02/25/七、springBoot 简单优雅是实现文件上传和下载/","title":"七、springBoot 简单优雅是实现文件上传和下载"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>七、springBoot 简单优雅是实现文件上传和下载 | Hexo</title>
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Hexo</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%89%8D%E8%A8%80"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE"><span class="nav-number">2.</span> <span class="nav-text">配置</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#controller-%E5%B1%82"><span class="nav-number">3.</span> <span class="nav-text">controller 层</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%B5%8B%E8%AF%95"><span class="nav-number">4.</span> <span class="nav-text">测试</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%96%87%E4%BB%B6%E4%B8%8B%E8%BD%BD"><span class="nav-number">5.</span> <span class="nav-text">文件下载</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%88%A0%E9%99%A4%E6%96%87%E4%BB%B6"><span class="nav-number">6.</span> <span class="nav-text">删除文件</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%95%AA%E5%A4%96"><span class="nav-number">7.</span> <span class="nav-text">番外</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">John Doe</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">54</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+        <span class="site-state-item-count">13</span>
+        <span class="site-state-item-name">categories</span>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">35</span>
+        <span class="site-state-item-name">tags</span>
+      </div>
+  </nav>
+</div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2022/02/25/%E4%B8%83%E3%80%81springBoot%20%E7%AE%80%E5%8D%95%E4%BC%98%E9%9B%85%E6%98%AF%E5%AE%9E%E7%8E%B0%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E5%92%8C%E4%B8%8B%E8%BD%BD/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="John Doe">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          七、springBoot 简单优雅是实现文件上传和下载
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+      
+
+      <time title="Created: 2022-02-25 20:54:08 / Modified: 15:14:51" itemprop="dateCreated datePublished" datetime="2022-02-25T20:54:08+08:00">2022-02-25</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/springBoot/" itemprop="url" rel="index"><span itemprop="name">springBoot</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>好久没有更新spring Boot 这个项目了。最近看了一下docker 的知识，后期打算将spring boot 和docker 结合起来。刚好最近有一个上传文件的工作呢，刚好就想起这个脚手架，将文件上传和下载整理进来。</p>
+<h1 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h1><p>在application.properties 中增加上传文件存放的路径配置</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">#文件上传目录</span><br><span class="line">file.upload.url=E:/test</span><br></pre></td></tr></table></figure>
+
+<h1 id="controller-层"><a href="#controller-层" class="headerlink" title="controller 层"></a>controller 层</h1><p>上传文件和下载文件都比较简单，我们就直接在controller层来编写。也不用在pom.xml 中增加什么依赖。所以直接上代码。<br>在controller 包下创建一个file包，在file 包下创建一个FileController 类。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">@RestController</span><br><span class="line">@RequestMapping(&quot;file&quot;)</span><br><span class="line">@Slf4j</span><br><span class="line">public class FileController &#123;</span><br><span class="line">    @Value(&quot;$&#123;file.upload.url&#125;&quot;)</span><br><span class="line">    private String uploadFilePath;</span><br><span class="line">		</span><br><span class="line">		@RequestMapping(&quot;/upload&quot;)</span><br><span class="line">    public String httpUpload(@RequestParam(&quot;files&quot;) MultipartFile files[])&#123;</span><br><span class="line">        JSONObject object=new JSONObject();</span><br><span class="line">        for(int i=0;i&lt;files.length;i  )&#123;</span><br><span class="line">            String fileName = files[i].getOriginalFilename();  // 文件名</span><br><span class="line">            File dest = new File(uploadFilePath  &#x27;/&#x27;  fileName);</span><br><span class="line">            if (!dest.getParentFile().exists()) &#123;</span><br><span class="line">                dest.getParentFile().mkdirs();</span><br><span class="line">            &#125;</span><br><span class="line">            try &#123;</span><br><span class="line">                files[i].transferTo(dest);</span><br><span class="line">            &#125; catch (Exception e) &#123;</span><br><span class="line">                log.error(&quot;&#123;&#125;&quot;,e);</span><br><span class="line">                object.put(&quot;success&quot;,2);</span><br><span class="line">                object.put(&quot;result&quot;,&quot;程序错误，请重新上传&quot;);</span><br><span class="line">                return object.toString();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        object.put(&quot;success&quot;,1);</span><br><span class="line">        object.put(&quot;result&quot;,&quot;文件上传成功&quot;);</span><br><span class="line">        return object.toString();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>上面的代码看起来有点多，其实就是一个上传的方法，首先通过 MultipartFile 接收文件。这里我用的是file[] 数组接收文件，这是为了兼容多文件上传的情况，如果只用file 接收，然后在接口上传多个文件的话，只会接收最后一个文件。这里大家注意一下。看自己的需求，我这里兼容多文件所以用数组接收。</p>
+<p>然后遍历files 获取文件，下面这段代码是判断文件在所在目录是否存在，如果不存在就创建对应的目录。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">File dest = new File(uploadFilePath  &#x27;/&#x27;  fileName);</span><br><span class="line">           if (!dest.getParentFile().exists()) &#123;</span><br><span class="line">               dest.getParentFile().mkdirs();</span><br><span class="line">           &#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">files[i].transferTo(dest);</span><br></pre></td></tr></table></figure>
+<p>就是将文件存放到对应的服务器，这里有一点需要说明一下，如果我们上传重复的文件会怎么样么？上传重复的文件不会报错，后上传的文件会直接覆盖已经上传的文件。</p>
+<p>整体代码就是这样。现在就可以实现文件的上传操作。</p>
+<h1 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h1><p>我们写好之后，基本上传功能就已经实现了，我们现在来测试一下。启动项目后我们用postman 请求，因为我们需要上传文件，用get 方式请求不了。<br><img src="https://img-blog.csdnimg.cn/20191028180801278.jpeg?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzI3NzkwMDEx,size_16,color_FFFFFF,t_70" alt="file"><br><img src="https://img-blog.csdnimg.cn/20191028180801508.jpeg?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzI3NzkwMDEx,size_16,color_FFFFFF,t_70" alt="file"></p>
+<p>可以看到文件上传成功了，由此可见，springboot文件上传一个方法就搞定了。</p>
+<h1 id="文件下载"><a href="#文件下载" class="headerlink" title="文件下载"></a>文件下载</h1><p>其实文件下载，不太建议用接口做，因为文件下载一般都是下载一些静态文件，我们可以先将文件处理好，然后通过Nginx 服务下载静态文件，这样速度会快很多。但是这里我们还是写一下。代码也很简单，就一个方法，也写在fileController 类中</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">@RequestMapping(&quot;/download&quot;)</span><br><span class="line">   public String fileDownLoad(HttpServletResponse response, @RequestParam(&quot;fileName&quot;) String fileName)&#123;</span><br><span class="line">       File file = new File(downloadFilePath  &#x27;/&#x27;  fileName);</span><br><span class="line">       if(!file.exists())&#123;</span><br><span class="line">           return &quot;下载文件不存在&quot;;</span><br><span class="line">       &#125;</span><br><span class="line">       response.reset();</span><br><span class="line">       response.setContentType(&quot;application/octet-stream&quot;);</span><br><span class="line">       response.setCharacterEncoding(&quot;utf-8&quot;);</span><br><span class="line">       response.setContentLength((int) file.length());</span><br><span class="line">       response.setHeader(&quot;Content-Disposition&quot;, &quot;attachment;filename=&quot;   fileName );</span><br><span class="line"></span><br><span class="line">       try(BufferedInputStream bis = new BufferedInputStream(new FileInputStream(file));) &#123;</span><br><span class="line">           byte[] buff = new byte[1024];</span><br><span class="line">           OutputStream os  = response.getOutputStream();</span><br><span class="line">           int i = 0;</span><br><span class="line">           while ((i = bis.read(buff)) != -1) &#123;</span><br><span class="line">               os.write(buff, 0, i);</span><br><span class="line">               os.flush();</span><br><span class="line">           &#125;</span><br><span class="line">       &#125; catch (IOException e) &#123;</span><br><span class="line">           log.error(&quot;&#123;&#125;&quot;,e);</span><br><span class="line">           return &quot;下载失败&quot;;</span><br><span class="line">       &#125;</span><br><span class="line">       return &quot;下载成功&quot;;</span><br><span class="line">   &#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p> 代码也很简单，就是根据文件名判断是否存在文件，不存在就提示没有文件，存在就将文件下载下来。response设置返回文件的格式，以文件流的方式返回，采用utf-8 字符集，设置下载后的文件名。然后就是以文件流的方式下载文件了。</p>
+<p> 测试的话也简单，我们启动项目，访问接口<br> <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">http://localhost:9090/zlflovemm/file/download?fileName=11</span><br><span class="line">http://localhost:9090/zlflovemm/file/download?fileName=1.rar</span><br></pre></td></tr></table></figure><br> <img src="https://img-blog.csdnimg.cn/20191028180801787.jpeg" alt="file"><br> <img src="https://img-blog.csdnimg.cn/20191028180800424.jpeg?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzI3NzkwMDEx,size_16,color_FFFFFF,t_70" alt="file"><br> 可以看到如果文件存在，会直接下载，不会提示下载成功或者失败。</p>
+<h1 id="删除文件"><a href="#删除文件" class="headerlink" title="删除文件"></a>删除文件</h1><p> 删除文件是很简单的，我这里讲一下删除文件下所有文件夹和文件。并做一个定时任务，每天清理一次。<br> <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"> </span><br><span class="line">@Scheduled(cron=&quot;0 0 3 * * ?&quot;)</span><br><span class="line">private void deleteFiles()&#123;</span><br><span class="line">    deleteFile(new File(deleteFilePath));</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">public void deleteFile(File file)&#123;</span><br><span class="line">    //判断文件不为null或文件目录存在</span><br><span class="line">    if (file == null || !file.exists())&#123;</span><br><span class="line">        log.info(&quot;暂无文件&quot;);</span><br><span class="line">        return;</span><br><span class="line">    &#125;</span><br><span class="line">    //取得这个目录下的所有子文件对象</span><br><span class="line">    File[] files = file.listFiles();</span><br><span class="line">    //遍历该目录下的文件对象</span><br><span class="line">    for (File f: files)&#123;</span><br><span class="line">        //打印文件名</span><br><span class="line">        String name = f.getName();</span><br><span class="line">        log.info(name);</span><br><span class="line">        //判断子目录是否存在子目录,如果是文件则删除</span><br><span class="line">        if (f.isDirectory())&#123;</span><br><span class="line">            deleteFile(f);</span><br><span class="line">        &#125;else &#123;</span><br><span class="line">            f.delete();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    //删除空文件夹  for循环已经把上一层节点的目录清空。</span><br><span class="line">    file.delete();</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure></p>
+<h1 id="番外"><a href="#番外" class="headerlink" title="番外"></a>番外</h1><p>到此为止，我们常用的镜像和容器的操作就会使用啦。都是一些命令。忘记的可以–help 查看一下。</p>
+<p>好了，就说这么多啦<br>代码上传到github：<br><a target="_blank" rel="noopener" href="https://github.com/QuellanAn/zlflovemm">https://github.com/QuellanAn/zlflovemm</a></p>
+<p>后续加油♡</p>
+<p>欢迎大家关注个人公众号 “程序员爱酸奶”</p>
+<p>分享各种学习资料，包含java，linux，大数据等。资料包含视频文档以及源码，同时分享本人及投递的优质技术博文。</p>
+<p>如果大家喜欢记得关注和分享哟❤</p>
+<p><img src="https://img-blog.csdnimg.cn/20191015213334732.jpeg?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzI3NzkwMDEx,size_16,color_FFFFFF,t_70" alt="file"></p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/springboot/" rel="tag"># springboot</a>
+              <a href="/tags/java/" rel="tag"># java</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2022/02/25/%E5%85%AD%E3%80%81springboot%20%E7%AE%80%E5%8D%95%E4%BC%98%E9%9B%85%E6%98%AF%E5%AE%9E%E7%8E%B0%E7%9F%AD%E4%BF%A1%E6%9C%8D%E5%8A%A1/" rel="prev" title="六、springboot 简单优雅是实现短信服务">
+                  <i class="fa fa-chevron-left"></i> 六、springboot 简单优雅是实现短信服务
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2022/02/25/%E5%A6%82%E4%BD%95%E4%BC%98%E9%9B%85%E5%AE%9E%E7%8E%B0%E5%B1%9E%E6%80%A7%E7%9A%84%E5%8A%A8%E6%80%81%E6%B3%A8%E5%85%A5/" rel="next" title="如何优雅实现属性的动态注入">
+                  如何优雅实现属性的动态注入 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">John Doe</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

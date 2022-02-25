@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.0.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.10.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
+
+  <meta name="description" content="前言这个项目有一段时间没有更新了，不过我可没有偷懒哟，是偷偷准备了一个大招，现在是时候展示啦哈哈。 我们今天要做的，就是将我们的项目通过docker-compose 构建成镜像运行。为什么要这样做呢？比我我前面的这些教程，用到了mysql,如果你们想要运行我的程序，就必须在自己电脑上装mysql 数据库才行，也就是项目用依赖了哪些环境，都必须先将这些环境部署好才能运行项目，那我们要做的，只用安装d">
+<meta property="og:type" content="website">
+<meta property="og:title" content="八、springboot 简单优雅的通过docker-compose 构建">
+<meta property="og:url" content="http://example.com/2022/02/25/%E5%85%AB%E3%80%81springboot%20%E7%AE%80%E5%8D%95%E4%BC%98%E9%9B%85%E7%9A%84%E9%80%9A%E8%BF%87docker-compose%20%E6%9E%84%E5%BB%BA/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="前言这个项目有一段时间没有更新了，不过我可没有偷懒哟，是偷偷准备了一个大招，现在是时候展示啦哈哈。 我们今天要做的，就是将我们的项目通过docker-compose 构建成镜像运行。为什么要这样做呢？比我我前面的这些教程，用到了mysql,如果你们想要运行我的程序，就必须在自己电脑上装mysql 数据库才行，也就是项目用依赖了哪些环境，都必须先将这些环境部署好才能运行项目，那我们要做的，只用安装d">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20191111184510325.jpeg?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9xdWVsbGFuYW4uYmxvZy5jc2RuLm5ldA==,size_16,color_FFFFFF,t_70">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20191111184511576.jpeg">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/201911111845128.jpeg?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9xdWVsbGFuYW4uYmxvZy5jc2RuLm5ldA==,size_16,color_FFFFFF,t_70">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20191111184512418.jpeg?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9xdWVsbGFuYW4uYmxvZy5jc2RuLm5ldA==,size_16,color_FFFFFF,t_70">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20191111184512694.jpeg">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20191111184511594.jpeg">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20191111184514254.jpeg">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20191015213334732.jpeg?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzI3NzkwMDEx,size_16,color_FFFFFF,t_70">
+<meta property="article:published_time" content="2022-02-25T12:54:08.871Z">
+<meta property="article:modified_time" content="2022-02-25T07:14:51.741Z">
+<meta property="article:author" content="John Doe">
+<meta property="article:tag" content="springboot">
+<meta property="article:tag" content="java">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://img-blog.csdnimg.cn/20191111184510325.jpeg?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9xdWVsbGFuYW4uYmxvZy5jc2RuLm5ldA==,size_16,color_FFFFFF,t_70">
+
+
+<link rel="canonical" href="http://example.com/2022/02/25/%E5%85%AB%E3%80%81springboot%20%E7%AE%80%E5%8D%95%E4%BC%98%E9%9B%85%E7%9A%84%E9%80%9A%E8%BF%87docker-compose%20%E6%9E%84%E5%BB%BA/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"http://example.com/2022/02/25/%E5%85%AB%E3%80%81springboot%20%E7%AE%80%E5%8D%95%E4%BC%98%E9%9B%85%E7%9A%84%E9%80%9A%E8%BF%87docker-compose%20%E6%9E%84%E5%BB%BA/","path":"2022/02/25/八、springboot 简单优雅的通过docker-compose 构建/","title":"八、springboot 简单优雅的通过docker-compose 构建"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>八、springboot 简单优雅的通过docker-compose 构建 | Hexo</title>
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Hexo</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%89%8D%E8%A8%80"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%85%8D%E7%BD%AERedis"><span class="nav-number">2.</span> <span class="nav-text">配置Redis</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A2%9E%E5%8A%A0%E9%85%8D%E7%BD%AE"><span class="nav-number">2.1.</span> <span class="nav-text">增加配置</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AE%80%E5%8D%95%E4%BD%BF%E7%94%A8"><span class="nav-number">2.2.</span> <span class="nav-text">简单使用</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#docker-compose-%E9%83%A8%E7%BD%B2"><span class="nav-number">3.</span> <span class="nav-text">docker-compose 部署</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#pom-xml"><span class="nav-number">3.1.</span> <span class="nav-text">pom.xml</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Dockerfile"><span class="nav-number">3.2.</span> <span class="nav-text">Dockerfile</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#mvn-package"><span class="nav-number">3.3.</span> <span class="nav-text">mvn package</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#docker-compose-yml"><span class="nav-number">3.4.</span> <span class="nav-text">docker-compose.yml</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B5%8B%E8%AF%95"><span class="nav-number">3.5.</span> <span class="nav-text">测试</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%95%AA%E5%A4%96"><span class="nav-number">4.</span> <span class="nav-text">番外</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">John Doe</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">54</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+        <span class="site-state-item-count">13</span>
+        <span class="site-state-item-name">categories</span>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">35</span>
+        <span class="site-state-item-name">tags</span>
+      </div>
+  </nav>
+</div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2022/02/25/%E5%85%AB%E3%80%81springboot%20%E7%AE%80%E5%8D%95%E4%BC%98%E9%9B%85%E7%9A%84%E9%80%9A%E8%BF%87docker-compose%20%E6%9E%84%E5%BB%BA/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="John Doe">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          八、springboot 简单优雅的通过docker-compose 构建
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+      
+
+      <time title="Created: 2022-02-25 20:54:08 / Modified: 15:14:51" itemprop="dateCreated datePublished" datetime="2022-02-25T20:54:08+08:00">2022-02-25</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/springBoot/" itemprop="url" rel="index"><span itemprop="name">springBoot</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>这个项目有一段时间没有更新了，不过我可没有偷懒哟，是偷偷准备了一个大招，现在是时候展示啦哈哈。</p>
+<p>我们今天要做的，就是将我们的项目通过docker-compose 构建成镜像运行。为什么要这样做呢？比我我前面的这些教程，用到了mysql,如果你们想要运行我的程序，就必须在自己电脑上装mysql 数据库才行，也就是项目用依赖了哪些环境，都必须先将这些环境部署好才能运行项目，那我们要做的，只用安装docker和docke-compose ，然后运行就完事了，不用管什么环境的。</p>
+<p>初一听，好像还行，但是根本没有接触docker-compose 怎么办？不要慌，一个专题带你飞，虽不能让你所向披靡，但也足你叱咤江湖啦<br>传送门：<a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_27790011/article/category/9429389">docker自我修炼从0到1</a></p>
+<p>还有我查看项目发现竟然没有配置Redis，但是Redis 使用也是很广泛的，我之前的文章有详细的讲解springboot项目怎么使用redis。我这里只是简单的将他配上去确保架构的完整性，就不做更多的讲解，需要详细了解的可以参考<a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_27790011/article/category/9187012">Redis–从零开始随笔</a></p>
+<p>好了，前面说了这么多无非是想表达这篇文章分两个大部分，部署Redis和通过docker-compose 搭建。</p>
+<h1 id="配置Redis"><a href="#配置Redis" class="headerlink" title="配置Redis"></a>配置Redis</h1><h2 id="增加配置"><a href="#增加配置" class="headerlink" title="增加配置"></a>增加配置</h2><p>在pom.xml文件中增加Redis的依赖</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&lt;dependency&gt;</span><br><span class="line">            &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;</span><br><span class="line">            &lt;artifactId&gt;spring-boot-starter-data-redis&lt;/artifactId&gt;</span><br><span class="line">        &lt;/dependency&gt;</span><br></pre></td></tr></table></figure>
+<p>在application.properties 中存在redis 连接信息。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">#配置redis</span><br><span class="line"># Redis数据库索引（默认为0）</span><br><span class="line">spring.redis.database=0  </span><br><span class="line"># Redis服务器地址</span><br><span class="line">spring.redis.host=192.168.252.53</span><br><span class="line"># Redis服务器连接端口</span><br><span class="line">spring.redis.port=6389 </span><br><span class="line"># Redis服务器连接密码（默认为空）</span><br><span class="line">spring.redis.password=</span><br><span class="line"># 连接池最大连接数（使用负值表示没有限制） 默认 8</span><br><span class="line">spring.redis.lettuce.pool.max-active=8</span><br><span class="line"># 连接池最大阻塞等待时间（使用负值表示没有限制） 默认 -1</span><br><span class="line">spring.redis.lettuce.pool.max-wait=-1</span><br><span class="line"># 连接池中的最大空闲连接 默认 8</span><br><span class="line">spring.redis.lettuce.pool.max-idle=8</span><br><span class="line"># 连接池中的最小空闲连接 默认 0</span><br><span class="line">spring.redis.lettuce.pool.min-idle=0</span><br></pre></td></tr></table></figure>
+
+<h2 id="简单使用"><a href="#简单使用" class="headerlink" title="简单使用"></a>简单使用</h2><p>配置好了，我们还是说一下简单使用，这些在之前也有讲，代码也是差不多的。我们在controller 层创建一个 redis 包，在Redis包下创建一个RedisController类。<br>代码如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">@RestController</span><br><span class="line">@RequestMapping(&quot;/redis&quot;)</span><br><span class="line">@Slf4j</span><br><span class="line">public class RedisController &#123;</span><br><span class="line"></span><br><span class="line">    @Autowired</span><br><span class="line">    private StringRedisTemplate stringRedisTemplate;</span><br><span class="line"></span><br><span class="line">    @RequestMapping(value = &quot;/add&quot;,method = RequestMethod.GET)</span><br><span class="line">    public String add(@RequestParam(value=&quot;key&quot;)String key,@RequestParam(value = &quot;value&quot;) String value)&#123;</span><br><span class="line">        ValueOperations ops=stringRedisTemplate.opsForValue();</span><br><span class="line">        ops.set(key,value);</span><br><span class="line">        return &quot;success&quot;;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @RequestMapping(value = &quot;/get&quot;,method = RequestMethod.GET)</span><br><span class="line">    public String get(@RequestParam(value = &quot;key&quot;)String key)&#123;</span><br><span class="line">        ValueOperations ops=stringRedisTemplate.opsForValue();</span><br><span class="line">        return (String) ops.get(key);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><img src="https://img-blog.csdnimg.cn/20191111184510325.jpeg?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9xdWVsbGFuYW4uYmxvZy5jc2RuLm5ldA==,size_16,color_FFFFFF,t_70" alt="file"></p>
+<p>好了项目整合Redis 就这么多了，至于测试我们待会后面部署好了一起测试。接下来开始重头戏。</p>
+<h1 id="docker-compose-部署"><a href="#docker-compose-部署" class="headerlink" title="docker-compose 部署"></a>docker-compose 部署</h1><p>我们现在有一个springboot项目，现在怎么构建成一个镜像放在服务器上运行呢？<br>我们一步步来，首先是增加配置。</p>
+<h2 id="pom-xml"><a href="#pom-xml" class="headerlink" title="pom.xml"></a>pom.xml</h2><p>还是我们熟悉的pom.xml 我们需要在pom.xml 中 build–&gt;plugins 中增加配置：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line">&lt;!-- Docker --&gt;</span><br><span class="line">            &lt;plugin&gt;</span><br><span class="line">                &lt;groupId&gt;com.spotify&lt;/groupId&gt;</span><br><span class="line">                &lt;artifactId&gt;docker-maven-plugin&lt;/artifactId&gt;</span><br><span class="line">                &lt;version&gt;1.0.0&lt;/version&gt;</span><br><span class="line">                &lt;!-- 将插件绑定在某个phase执行 --&gt;</span><br><span class="line">                &lt;executions&gt;</span><br><span class="line">                    &lt;execution&gt;</span><br><span class="line">                        &lt;id&gt;build-image&lt;/id&gt;</span><br><span class="line">                        &lt;!-- 用户只需执行mvn package ，就会自动执行mvn docker:build --&gt;</span><br><span class="line">                        &lt;phase&gt;package&lt;/phase&gt;</span><br><span class="line">                        &lt;goals&gt;</span><br><span class="line">                            &lt;goal&gt;build&lt;/goal&gt;</span><br><span class="line">                        &lt;/goals&gt;</span><br><span class="line">                    &lt;/execution&gt;</span><br><span class="line">                &lt;/executions&gt;</span><br><span class="line">                &lt;configuration&gt;</span><br><span class="line">                    &lt;!-- 指定生成的镜像名 --&gt;</span><br><span class="line">                    &lt;imageName&gt;$&#123;docker.image.prefix&#125;/$&#123;project.artifactId&#125;:$&#123;project.version&#125;&lt;/imageName&gt;</span><br><span class="line">                    &lt;!-- 指定标签 --&gt;</span><br><span class="line">                    &lt;imageTags&gt;</span><br><span class="line">                        &lt;imageTag&gt;$&#123;project.version&#125;&lt;/imageTag&gt;</span><br><span class="line">                    &lt;/imageTags&gt;</span><br><span class="line">                    &lt;!-- 指定 Dockerfile 路径 --&gt;</span><br><span class="line">                    &lt;dockerDirectory&gt;src/main/docker&lt;/dockerDirectory&gt;</span><br><span class="line">                    &lt;!-- 指定远程 docker api地址 --&gt;</span><br><span class="line">                    &lt;dockerHost&gt;http://127.0.0.1:2375&lt;/dockerHost&gt;</span><br><span class="line">                    &lt;resources&gt;</span><br><span class="line">                        &lt;resource&gt;</span><br><span class="line">                            &lt;targetPath&gt;/&lt;/targetPath&gt;</span><br><span class="line">                            &lt;!-- jar包所在的路径此处配置的对应target目录 --&gt;</span><br><span class="line">                            &lt;directory&gt;$&#123;project.build.directory&#125;&lt;/directory&gt;</span><br><span class="line">                            &lt;!-- 需要包含的jar包,这里对应的是Dockerfile中添加的文件名　--&gt;</span><br><span class="line">                            &lt;include&gt;$&#123;project.build.finalName&#125;.jar&lt;/include&gt;</span><br><span class="line">                        &lt;/resource&gt;</span><br><span class="line">                    &lt;/resources&gt;</span><br><span class="line">                &lt;/configuration&gt;</span><br><span class="line">            &lt;/plugin&gt;</span><br></pre></td></tr></table></figure>
+<p>上面都有注释没有什么好讲的，其中指定生成镜像名的${docker.image.prefix} 的值在properties 中配置。<br><img src="https://img-blog.csdnimg.cn/20191111184511576.jpeg" alt="file"></p>
+<h2 id="Dockerfile"><a href="#Dockerfile" class="headerlink" title="Dockerfile"></a>Dockerfile</h2><p>我们在项目的src–&gt;main 创建一个docker 包，包下创建一个Dockerfile 问价 ，内容如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">FROM java:8</span><br><span class="line">VOLUME /tmp</span><br><span class="line">ADD zlflovemm-1.0.0.jar zlflovemm-1.0.0.jar</span><br><span class="line">ENTRYPOINT [&quot;java&quot;,&quot;-jar&quot;,&quot;/zlflovemm-1.0.0.jar&quot;]</span><br></pre></td></tr></table></figure>
+
+
+<h2 id="mvn-package"><a href="#mvn-package" class="headerlink" title="mvn package"></a>mvn package</h2><p>接下来我们使用maven package 打包，就可以将项目打包成镜像并发送到我们配置的服务器上。可以看到我们的镜像已经到我们的服务器了。<br><img src="https://img-blog.csdnimg.cn/201911111845128.jpeg?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9xdWVsbGFuYW4uYmxvZy5jc2RuLm5ldA==,size_16,color_FFFFFF,t_70" alt="file"></p>
+<h2 id="docker-compose-yml"><a href="#docker-compose-yml" class="headerlink" title="docker-compose.yml"></a>docker-compose.yml</h2><p>我们现在项目镜像有了，现在需要通过docker-compose.yml 将项目，mysql .redis 都管理起来。<br>我们创建一个docker-compose.yml 内容如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line">version: &quot;3&quot;</span><br><span class="line"></span><br><span class="line">services:</span><br><span class="line">  webapp:</span><br><span class="line">    image: quellanan/zlflovemm:1.0.0</span><br><span class="line">    ports:</span><br><span class="line">      - &quot;9001:9090&quot;</span><br><span class="line">    volumes:</span><br><span class="line">      - &quot;/data&quot;</span><br><span class="line">    depends_on: </span><br><span class="line">      - redis</span><br><span class="line">      - mysql</span><br><span class="line"></span><br><span class="line">  redis:</span><br><span class="line">    image: redis:latest</span><br><span class="line">    restart: always</span><br><span class="line">    ports:</span><br><span class="line">      - &quot;6389:6379&quot;</span><br><span class="line">    volumes:</span><br><span class="line">      - /redis/redis.conf:/etc/redis/redis.conf</span><br><span class="line">    command: redis-server /etc/redis/redis.conf</span><br><span class="line"></span><br><span class="line">  mysql:</span><br><span class="line">    image: mysql:latest</span><br><span class="line">    restart: always</span><br><span class="line">    environment:</span><br><span class="line">      MYSQL_ROOT_PASSWORD: &quot;123456&quot;</span><br><span class="line">      MYSQL_USER: &#x27;root&#x27;</span><br><span class="line">      MYSQL_PASS: &#x27;123456&#x27;</span><br><span class="line">    ports:</span><br><span class="line">       - &quot;3306:3306&quot;</span><br><span class="line">    volumes:</span><br><span class="line">       - &quot;./db:/var/lib/mysql&quot;</span><br><span class="line">       - &quot;./conf/my.cnf:/etc/my.cnf&quot;</span><br><span class="line">       - &quot;./init:/docker-entrypoint-initdb.d/&quot;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>webapp 和Redis 配置我就不说了，上一篇文章已经说了，这里我们说一下mysql 的配置。<br>image:mysql:laster 我们选择最新的版本的mysql 镜像。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">environment:</span><br><span class="line">  MYSQL_ROOT_PASSWORD: &quot;123456&quot;</span><br><span class="line">  MYSQL_USER: &#x27;root&#x27;</span><br><span class="line">  MYSQL_PASS: &#x27;123456&#x27;</span><br></pre></td></tr></table></figure>
+<p>environment 配置的是mysql 的root 用户密码普通的用户及密码。<br>配置我们自定义的mysql 配置，如果使用的默认的，这里的数据卷其实可以不用指定。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">volumes:</span><br><span class="line">       - &quot;./db:/var/lib/mysql&quot;</span><br><span class="line">       - &quot;./conf/my.cnf:/etc/my.cnf&quot;</span><br><span class="line">       - &quot;./init:/docker-entrypoint-initdb.d/&quot;</span><br></pre></td></tr></table></figure>
+<p>我们创建好了docker-compose 后，在同级目录下执行</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker-compose up</span><br></pre></td></tr></table></figure>
+<p><img src="https://img-blog.csdnimg.cn/20191111184512418.jpeg?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9xdWVsbGFuYW4uYmxvZy5jc2RuLm5ldA==,size_16,color_FFFFFF,t_70" alt="file"><br>就可以看到镜像容器已经启动了。项目包含三个镜像,现在我们来验证一下项目正常启动没有。</p>
+<h2 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h2><p>由于我们使用了docker镜像的mysql  。所以之前的项目使用的数据库需要重新执行一次，我们代码中有，我就不贴出来了。项目的接口我们现在调一下看看。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># 检测项目正常启动没有</span><br><span class="line">http://192.168.252.53:9001/zlflovemm/</span><br></pre></td></tr></table></figure>
+<p><img src="https://img-blog.csdnimg.cn/20191111184512694.jpeg" alt="file"></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># 检测mysql 是否正常</span><br><span class="line">http://192.168.252.53:9001/zlflovemm/user/list</span><br></pre></td></tr></table></figure>
+<p><img src="https://img-blog.csdnimg.cn/20191111184511594.jpeg" alt="file"></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"># 检测Redis 是否正常</span><br><span class="line">http://192.168.252.53:9001/zlflovemm/redis/add?key=a&amp;value=123</span><br><span class="line">http://192.168.252.53:9001/zlflovemm/redis/get?key=a</span><br></pre></td></tr></table></figure>
+<p><img src="https://img-blog.csdnimg.cn/20191111184514254.jpeg" alt="file"></p>
+<h1 id="番外"><a href="#番外" class="headerlink" title="番外"></a>番外</h1><p>到此为止，将springboot项目构建成镜像完成啦，感觉整篇文件将的比较粗糙，这篇主要是整合，详细的都在前面的博客已经讲了，所以这里就没有再讲了。</p>
+<p>好了，就说这么多啦<br>代码上传到github：<br><a target="_blank" rel="noopener" href="https://github.com/QuellanAn/zlflovemm">https://github.com/QuellanAn/zlflovemm</a></p>
+<p>后续加油♡</p>
+<p>欢迎大家关注个人公众号 “程序员爱酸奶”</p>
+<p>分享各种学习资料，包含java，linux，大数据等。资料包含视频文档以及源码，同时分享本人及投递的优质技术博文。</p>
+<p>如果大家喜欢记得关注和分享哟❤</p>
+<p><img src="https://img-blog.csdnimg.cn/20191015213334732.jpeg?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzI3NzkwMDEx,size_16,color_FFFFFF,t_70" alt="file"></p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/springboot/" rel="tag"># springboot</a>
+              <a href="/tags/java/" rel="tag"># java</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2022/02/25/UE%E6%BF%80%E6%B4%BB%EF%BC%88%E4%BA%B2%E6%B5%8B%E6%9C%89%E6%95%88%EF%BC%8C%E9%80%9A%E8%BF%87%E6%B3%A8%E5%86%8C%E6%9C%BA%E6%BF%80%E6%B4%BB%EF%BC%89/" rel="prev" title="UE激活（亲测有效，通过注册机激活）">
+                  <i class="fa fa-chevron-left"></i> UE激活（亲测有效，通过注册机激活）
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">John Doe</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

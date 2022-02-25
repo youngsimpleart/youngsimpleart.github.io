@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.0.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.10.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
+
+  <meta name="description" content="前言熔断处理什么呢？在微服务项目中，有很多的服务，在服务消费者调用服务提供者的时候可能会出现网络异常或者请求超时或者阻塞等等一系列问题，不过不进行处理的话，就可能导致，长时间等待，进程阻塞，最终导致系统瘫痪。 所以就有了熔断处理，当服务提供者的接口不能访问或者异常异常时，进行降级处理，服务消费者能够正常的处理返回特定是数据。从而达到容灾的目的。 看了一下Hystrix ，其实有很多东西，我们就先来">
+<meta property="og:type" content="website">
+<meta property="og:title" content="四、Spring Cloud之熔断处理 Hystrix">
+<meta property="og:url" content="http://example.com/2022/02/25/%E5%9B%9B%E3%80%81Spring%20Cloud%E4%B9%8B%E7%86%94%E6%96%AD%E5%A4%84%E7%90%86%20Hystrix/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="前言熔断处理什么呢？在微服务项目中，有很多的服务，在服务消费者调用服务提供者的时候可能会出现网络异常或者请求超时或者阻塞等等一系列问题，不过不进行处理的话，就可能导致，长时间等待，进程阻塞，最终导致系统瘫痪。 所以就有了熔断处理，当服务提供者的接口不能访问或者异常异常时，进行降级处理，服务消费者能够正常的处理返回特定是数据。从而达到容灾的目的。 看了一下Hystrix ，其实有很多东西，我们就先来">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20200115165813644.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9xdWVsbGFuYW4uYmxvZy5jc2RuLm5ldA==,size_16,color_FFFFFF,t_70">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20200115171313707.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9xdWVsbGFuYW4uYmxvZy5jc2RuLm5ldA==,size_16,color_FFFFFF,t_70">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20200115172641776.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20200115173213537.gif">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20191015213334732.jpeg?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzI3NzkwMDEx,size_16,color_FFFFFF,t_70">
+<meta property="article:published_time" content="2022-02-25T12:54:08.650Z">
+<meta property="article:modified_time" content="2022-02-25T07:14:51.927Z">
+<meta property="article:author" content="John Doe">
+<meta property="article:tag" content="java">
+<meta property="article:tag" content="springCloud">
+<meta property="article:tag" content="Hystrix">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://img-blog.csdnimg.cn/20200115165813644.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9xdWVsbGFuYW4uYmxvZy5jc2RuLm5ldA==,size_16,color_FFFFFF,t_70">
+
+
+<link rel="canonical" href="http://example.com/2022/02/25/%E5%9B%9B%E3%80%81Spring%20Cloud%E4%B9%8B%E7%86%94%E6%96%AD%E5%A4%84%E7%90%86%20Hystrix/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"http://example.com/2022/02/25/%E5%9B%9B%E3%80%81Spring%20Cloud%E4%B9%8B%E7%86%94%E6%96%AD%E5%A4%84%E7%90%86%20Hystrix/","path":"2022/02/25/四、Spring Cloud之熔断处理 Hystrix/","title":"四、Spring Cloud之熔断处理 Hystrix"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>四、Spring Cloud之熔断处理 Hystrix | Hexo</title>
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Hexo</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%89%8D%E8%A8%80"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#pom-xml"><span class="nav-number">2.</span> <span class="nav-text">pom.xml</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#application-properties"><span class="nav-number">3.</span> <span class="nav-text">application.properties</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#fallback"><span class="nav-number">4.</span> <span class="nav-text">fallback</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%95%AA%E5%A4%96"><span class="nav-number">5.</span> <span class="nav-text">番外</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">John Doe</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">54</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+        <span class="site-state-item-count">13</span>
+        <span class="site-state-item-name">categories</span>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">35</span>
+        <span class="site-state-item-name">tags</span>
+      </div>
+  </nav>
+</div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2022/02/25/%E5%9B%9B%E3%80%81Spring%20Cloud%E4%B9%8B%E7%86%94%E6%96%AD%E5%A4%84%E7%90%86%20Hystrix/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="John Doe">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          四、Spring Cloud之熔断处理 Hystrix
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+      
+
+      <time title="Created: 2022-02-25 20:54:08 / Modified: 15:14:51" itemprop="dateCreated datePublished" datetime="2022-02-25T20:54:08+08:00">2022-02-25</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/springCloud/" itemprop="url" rel="index"><span itemprop="name">springCloud</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>熔断处理什么呢？在微服务项目中，有很多的服务，在服务消费者调用服务提供者的时候可能会出现网络异常或者请求超时或者阻塞等等一系列问题，不过不进行处理的话，就可能导致，长时间等待，进程阻塞，最终导致系统瘫痪。</p>
+<p>所以就有了熔断处理，当服务提供者的接口不能访问或者异常异常时，进行降级处理，服务消费者能够正常的处理返回特定是数据。从而达到容灾的目的。</p>
+<p>看了一下Hystrix ，其实有很多东西，我们就先来看看Hystrix 的简单使用，由于上节我们也说了Fegin 中集成了Hystrix  和ribbon .所以我们就直接使用Fegin 来实现一个简单的熔断处理的操作。</p>
+<h1 id="pom-xml"><a href="#pom-xml" class="headerlink" title="pom.xml"></a>pom.xml</h1><p>其实我们完全可以在上一节的ribbon-consumer 的基础上来，我这里为了保持独立性，所以copy 了一份ribbon-consumer 改成hystrix-consumer。<br>pom文件引入fegin 的依赖</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&lt;dependency&gt;</span><br><span class="line">    &lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;</span><br><span class="line">    &lt;artifactId&gt;spring-cloud-starter-openfeign&lt;/artifactId&gt;</span><br><span class="line">&lt;/dependency&gt;</span><br></pre></td></tr></table></figure>
+<p>在主类中增加@EnableFeignClients，其实这里仅仅使用hystrix 的话，可以使用@EnableCircuitBreaker。<br><img src="https://img-blog.csdnimg.cn/20200115165813644.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9xdWVsbGFuYW4uYmxvZy5jc2RuLm5ldA==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<h1 id="application-properties"><a href="#application-properties" class="headerlink" title="application.properties"></a>application.properties</h1><p>配置文件中开启熔断处理,将feign.hystrix.enabled设置为tue</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">#开启熔断处理</span><br><span class="line">feign.hystrix.enabled=true</span><br></pre></td></tr></table></figure>
+
+<h1 id="fallback"><a href="#fallback" class="headerlink" title="fallback"></a>fallback</h1><p>重点来啦，我们上一节在HelloService 中调服务提供者的接口，所以要做熔断处理的话，就需要在这里进行降级处理，就需要写一个降级处理的方法，如果服务提供者的接口不通，就调用这个方法，返回给客户端。<br>所以我们在server层创建一个fallback 文件夹，在fallback 包下创建HelloServiceFallback类实现 HelloService。内容如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">@Component</span><br><span class="line">public class HelloServiceFallback implements HelloService &#123;</span><br><span class="line">    @Override</span><br><span class="line">    public String hello() &#123;</span><br><span class="line">        return &quot;hello error&quot;;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public String hello2(@RequestParam(value = &quot;name&quot;) String name) &#123;</span><br><span class="line">        return &quot;hello2 error&quot;;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public String hello3(@RequestParam(value = &quot;name&quot;) String name, @RequestParam(value = &quot;age&quot;) String age) &#123;</span><br><span class="line">        return &quot;hello3 error&quot;;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    @Override</span><br><span class="line">    public String hello4(@RequestBody Map&lt;String, Object&gt; parms) &#123;</span><br><span class="line">        return &quot;hello4 error&quot;;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>注意给整个类加上@Component 注解，然后就是实现HelloService 中的方法啦。</p>
+<p>然后我们需要在HelloService 中的@FeignClient 注解做修改</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">@FeignClient(name = &quot;ribbon-provider&quot;,fallback = HelloServiceFallback.class)</span><br></pre></td></tr></table></figure>
+<p>name 用来指定服务提供者的服务名，fallback 用来指定降级处理的类。这里就是我们刚刚写HelloServiceFallback。<br><img src="https://img-blog.csdnimg.cn/20200115171313707.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9xdWVsbGFuYW4uYmxvZy5jc2RuLm5ldA==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>好了我们来启动项目测试一下。启动这三个项目，分别是注册中心，服务提供者hystrix-consumer，服务消费者ribbon-provider-9004<br><img src="https://img-blog.csdnimg.cn/20200115172641776.png" alt="在这里插入图片描述"><br>然后我们在界面输入</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://localhost:9006/fegin</span><br></pre></td></tr></table></figure>
+<p>然后关闭服务提供者，再调接口试试。<br><img src="https://img-blog.csdnimg.cn/20200115173213537.gif" alt="在这里插入图片描述"><br>可以看到服务提供者的接口断掉之前和之后返回的结果是不一样的。说明我们的熔断处理是生效的啦。</p>
+<h1 id="番外"><a href="#番外" class="headerlink" title="番外"></a>番外</h1><p>今天就说这么多吧，就先学习一下Hystrix 的基本使用，其他的一些功能，我们后续再说</p>
+<p> 代码上传到github：<br> <a target="_blank" rel="noopener" href="https://github.com/QuellanAn/springcloud">https://github.com/QuellanAn/springcloud</a></p>
+<p>后续加油♡</p>
+<p>欢迎大家关注个人公众号 “程序员爱酸奶”</p>
+<p>分享各种学习资料，包含java，linux，大数据等。资料包含视频文档以及源码，同时分享本人及投递的优质技术博文。</p>
+<p>如果大家喜欢记得关注和分享哟❤</p>
+<p><img src="https://img-blog.csdnimg.cn/20191015213334732.jpeg?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzI3NzkwMDEx,size_16,color_FFFFFF,t_70" alt="file"></p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/java/" rel="tag"># java</a>
+              <a href="/tags/springCloud/" rel="tag"># springCloud</a>
+              <a href="/tags/Hystrix/" rel="tag"># Hystrix</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2022/02/25/%E5%9B%9B%E3%80%81docker%20%E4%BB%93%E5%BA%93(%E8%AE%A9%E6%88%91%E4%BB%AC%E7%9A%84%E9%95%9C%E5%83%8F%E6%9C%89%E5%A4%84%E5%8F%AF%E5%AD%98)/" rel="prev" title="四、docker 仓库(让我们的镜像有处可存)">
+                  <i class="fa fa-chevron-left"></i> 四、docker 仓库(让我们的镜像有处可存)
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2022/02/25/%E4%BA%94%E3%80%81docker-compose%E5%BC%80%E9%94%8B%EF%BC%88docker%20%E4%B8%89%E5%89%91%E5%AE%A2%EF%BC%89/" rel="next" title="五、docker-compose开锋（docker 三剑客）">
+                  五、docker-compose开锋（docker 三剑客） <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">John Doe</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

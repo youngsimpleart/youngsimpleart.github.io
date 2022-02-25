@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.0.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.10.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
+
+  <meta name="description" content="前言终于写到docker-compose了，其实我最开始接触docker的时候，是因为一个开源项目需要用docker 环境和docke-compose 所以我最先接触的是docker-compse 后面才恶补的docker的一些基础知识。 可以看到docker-composer 和docker 有关系，但是你也了解docker-compose 的命令 简单的操作docker 容器。 说了这么多，还">
+<meta property="og:type" content="website">
+<meta property="og:title" content="五、docker-compose开锋（docker 三剑客）">
+<meta property="og:url" content="http://example.com/2022/02/25/%E4%BA%94%E3%80%81docker-compose%E5%BC%80%E9%94%8B%EF%BC%88docker%20%E4%B8%89%E5%89%91%E5%AE%A2%EF%BC%89/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="前言终于写到docker-compose了，其实我最开始接触docker的时候，是因为一个开源项目需要用docker 环境和docke-compose 所以我最先接触的是docker-compse 后面才恶补的docker的一些基础知识。 可以看到docker-composer 和docker 有关系，但是你也了解docker-compose 的命令 简单的操作docker 容器。 说了这么多，还">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/2019110815595186.jpeg?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9xdWVsbGFuYW4uYmxvZy5jc2RuLm5ldA==,size_16,color_FFFFFF,t_70">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20191108155950758.jpeg">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20191108155951768.jpeg?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9xdWVsbGFuYW4uYmxvZy5jc2RuLm5ldA==,size_16,color_FFFFFF,t_70">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20191108155951218.jpeg">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20191108155952431.jpeg">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20191108155952729.jpeg">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20191108155952359.jpeg">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20191108155953281.jpeg">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20191015213334732.jpeg?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzI3NzkwMDEx,size_16,color_FFFFFF,t_70">
+<meta property="article:published_time" content="2022-02-25T12:54:08.677Z">
+<meta property="article:modified_time" content="2022-02-25T07:14:51.661Z">
+<meta property="article:author" content="John Doe">
+<meta property="article:tag" content="docker">
+<meta property="article:tag" content="linux">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://img-blog.csdnimg.cn/2019110815595186.jpeg?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9xdWVsbGFuYW4uYmxvZy5jc2RuLm5ldA==,size_16,color_FFFFFF,t_70">
+
+
+<link rel="canonical" href="http://example.com/2022/02/25/%E4%BA%94%E3%80%81docker-compose%E5%BC%80%E9%94%8B%EF%BC%88docker%20%E4%B8%89%E5%89%91%E5%AE%A2%EF%BC%89/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"http://example.com/2022/02/25/%E4%BA%94%E3%80%81docker-compose%E5%BC%80%E9%94%8B%EF%BC%88docker%20%E4%B8%89%E5%89%91%E5%AE%A2%EF%BC%89/","path":"2022/02/25/五、docker-compose开锋（docker 三剑客）/","title":"五、docker-compose开锋（docker 三剑客）"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>五、docker-compose开锋（docker 三剑客） | Hexo</title>
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Hexo</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%89%8D%E8%A8%80"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%AE%89%E8%A3%85"><span class="nav-number">2.</span> <span class="nav-text">安装</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9C%AC%E5%9C%B0%E5%AE%89%E8%A3%85"><span class="nav-number">2.1.</span> <span class="nav-text">本地安装</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#docker-compose-yml"><span class="nav-number">3.</span> <span class="nav-text">docker-compose.yml</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%BB%E6%A8%A1%E7%89%88"><span class="nav-number">3.1.</span> <span class="nav-text">主模版</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#depends-on"><span class="nav-number">3.2.</span> <span class="nav-text">depends_on</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#docker-compose-%E6%8C%87%E4%BB%A4"><span class="nav-number">4.</span> <span class="nav-text">docker-compose 指令</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#docker-compose-config"><span class="nav-number">4.1.</span> <span class="nav-text">docker-compose config</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#docker-compose-up"><span class="nav-number">4.2.</span> <span class="nav-text">docker-compose up</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#docker-compose-down"><span class="nav-number">4.3.</span> <span class="nav-text">docker-compose down</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#docker-compose-restart"><span class="nav-number">4.4.</span> <span class="nav-text">docker-compose restart</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#demo"><span class="nav-number">5.</span> <span class="nav-text">demo</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%87%86%E5%A4%87%E6%88%91%E4%BB%AC%E7%9A%84redis-conf"><span class="nav-number">5.1.</span> <span class="nav-text">准备我们的redis.conf</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#docker-compose-yml-1"><span class="nav-number">5.2.</span> <span class="nav-text">docker-compose.yml</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#docker-compose-up-1"><span class="nav-number">5.3.</span> <span class="nav-text">docker-compose up</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B5%8B%E8%AF%95"><span class="nav-number">5.4.</span> <span class="nav-text">测试</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%95%AA%E5%A4%96"><span class="nav-number">6.</span> <span class="nav-text">番外</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">John Doe</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">54</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+        <span class="site-state-item-count">13</span>
+        <span class="site-state-item-name">categories</span>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">35</span>
+        <span class="site-state-item-name">tags</span>
+      </div>
+  </nav>
+</div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2022/02/25/%E4%BA%94%E3%80%81docker-compose%E5%BC%80%E9%94%8B%EF%BC%88docker%20%E4%B8%89%E5%89%91%E5%AE%A2%EF%BC%89/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="John Doe">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          五、docker-compose开锋（docker 三剑客）
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+      
+
+      <time title="Created: 2022-02-25 20:54:08 / Modified: 15:14:51" itemprop="dateCreated datePublished" datetime="2022-02-25T20:54:08+08:00">2022-02-25</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/docker/" itemprop="url" rel="index"><span itemprop="name">docker</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>终于写到docker-compose了，其实我最开始接触docker的时候，是因为一个开源项目需要用docker 环境和docke-compose 所以我最先接触的是docker-compse 后面才恶补的docker的一些基础知识。</p>
+<p>可以看到docker-composer 和docker 有关系，但是你也了解docker-compose 的命令 简单的操作docker 容器。</p>
+<p>说了这么多，还没有说docker-compose 有什么作用，为什么要使用docker-coompose。<br>其实我们都知道，在我们实际的项目中，一个项目一般都是前端服务端数据库都进行分离的。所以一个项目一般都是有多个镜像组成的。那怎么将这一组镜像管理起来呢？就是通过docker-compose 啦</p>
+<p>docker-compose 中有两个重要呢的概念<br>服务(service ): 就是我们上面说的一个应用容器，仅仅负责真个项目的中的一部分，比如数据库mysql.</p>
+<p>项目(project)：就是我们上面说你的项目啦，包含一组容器。</p>
+<p>docker-compose 通过 docker-compose.yml 文件对这一组容器进行配置。 </p>
+<p>好了，正式开始接触 docker-compose吧</p>
+<h1 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h1><p>docker-compose 安装很简单，windos 版本的已经自带了。我们可以通过</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker-compose  -v</span><br></pre></td></tr></table></figure>
+<p>查看我们本机安装的docker-compose 版本。<br>Linux 安装也很简单。<br>在官网上也有：<a target="_blank" rel="noopener" href="https://github.com/docker/compose/releases">https://github.com/docker/compose/releases</a></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get update</span><br><span class="line"></span><br><span class="line">#安装最新的docke-ce</span><br><span class="line">sudo apt-get install  docker-ce</span><br><span class="line"></span><br><span class="line"># 下载最新的docker-compose</span><br><span class="line">curl -L https://github.com/docker/compose/releases/download/1.25.0-rc4/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose</span><br><span class="line"></span><br><span class="line"># 修改docker-compose 权限</span><br><span class="line">chmod  x /usr/local/bin/docker-compose</span><br></pre></td></tr></table></figure>
+
+<p>卸载 docke-compose</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo rm /usr/local/bin/docker-compose</span><br></pre></td></tr></table></figure>
+
+<h2 id="本地安装"><a href="#本地安装" class="headerlink" title="本地安装"></a>本地安装</h2><p>如果上面安装不行的话，或者报错，可以用下面的方式进行安装。</p>
+<p>在上面的官网上找到对应版本的Assests 选择对应的文件下载。</p>
+<p><img src="https://img-blog.csdnimg.cn/2019110815595186.jpeg?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9xdWVsbGFuYW4uYmxvZy5jc2RuLm5ldA==,size_16,color_FFFFFF,t_70" alt="file"></p>
+<p>下载下来后，我们放到 &#x2F;usr&#x2F;local&#x2F;bin&#x2F;  目录下。执行下面操作</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">#改名</span><br><span class="line">sudo mv docker-compose-Linux-x86_64 ./docker-compose</span><br><span class="line">#增加执行权限</span><br><span class="line">sudo chmod  x /usr/local/bin/docker-compose</span><br></pre></td></tr></table></figure>
+<p>这样就和上面的效果是一样的啦，我们可以通过<code>docker-compose -v </code>查看安装成功没有。</p>
+<h1 id="docker-compose-yml"><a href="#docker-compose-yml" class="headerlink" title="docker-compose.yml"></a>docker-compose.yml</h1><p>知道了docker-compose  那最重要的就是docker-compose.yml 文件啦，通过这个文件就可以管理项目的镜像了，那我们怎么写docker-compose.yml 文件呢？<br>官方提供了很多模版，我们按照模版来写就可以了。</p>
+<h2 id="主模版"><a href="#主模版" class="headerlink" title="主模版"></a>主模版</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">version: &quot;3&quot;</span><br><span class="line"></span><br><span class="line">services:</span><br><span class="line">  webapp:</span><br><span class="line">    image: examples/web</span><br><span class="line">    ports:</span><br><span class="line">      - &quot;80:80&quot;</span><br><span class="line">    volumes:</span><br><span class="line">      - &quot;/data&quot;</span><br></pre></td></tr></table></figure>
+<p>可以看到格式就是我们熟悉的yml 格式，和我们springboot 项目中配置是差不多的。<br>我们前面知道的一个项目是由一组服务组成的，也就是你对应文件中的services。webapp 就是我们为服务起的一个名字，image 对应的镜像名，ports 镜像暴露的端口，volumes 镜像的数据卷。可以看到，里面的命令和docker run 的指令是差不多的。</p>
+<h2 id="depends-on"><a href="#depends-on" class="headerlink" title="depends_on"></a>depends_on</h2><p>解决容器的依赖，表示一个容器依赖其他的其他容器，比如说</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">version: &quot;3&quot;</span><br><span class="line"></span><br><span class="line">services:</span><br><span class="line">  webapp:</span><br><span class="line">    image: examples/web</span><br><span class="line">    ports:</span><br><span class="line">      - &quot;80:80&quot;</span><br><span class="line">    volumes:</span><br><span class="line">      - &quot;/data&quot;</span><br><span class="line">    depends_on: </span><br><span class="line">      - redis</span><br><span class="line">      - mysql</span><br><span class="line"></span><br><span class="line">  redis:</span><br><span class="line">    image: redis:latest</span><br><span class="line">    restart: always</span><br><span class="line">    ports:</span><br><span class="line">      - &quot;6379:6379&quot;</span><br><span class="line"></span><br><span class="line">  mysql:</span><br><span class="line">    image: mysql:latest</span><br><span class="line">    restart: always</span><br><span class="line">    ports:</span><br><span class="line">      - &quot;3306:3306&quot;</span><br></pre></td></tr></table></figure>
+<p>还是上面的例子，只不过我多加了两个 service 。表示这个项目中用到了mysql  和redis  并且在webapp 中使用depends_on 表示redis 和mysql 先webapp 启动。</p>
+<p>更多的模版，大家用的时候可以参考官网上就可以了我感觉。知道是什么意思就可以，不用都记下来。</p>
+<p><a target="_blank" rel="noopener" href="https://yeasy.gitbooks.io/docker_practice/content/compose/compose_file.html">https://yeasy.gitbooks.io/docker_practice/content/compose/compose_file.html</a></p>
+<h1 id="docker-compose-指令"><a href="#docker-compose-指令" class="headerlink" title="docker-compose 指令"></a>docker-compose 指令</h1><p>我们可以通过帮助指令来查看docker-compose 怎么使用。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker-compose --help </span><br></pre></td></tr></table></figure>
+
+<p>基本语法格式：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker-compose [-f=&lt;arg&gt;...] [options] [COMMAND] [ARGS...]</span><br></pre></td></tr></table></figure>
+
+<p>我这里也就将一下常见的，因为通过<code>--help</code>都可以查到。</p>
+<h2 id="docker-compose-config"><a href="#docker-compose-config" class="headerlink" title="docker-compose config"></a>docker-compose config</h2><p>用于检查我们的docker-compose.yml 文件的内容格式是否正确，在我们运行之前先检测一下比较好。</p>
+<h2 id="docker-compose-up"><a href="#docker-compose-up" class="headerlink" title="docker-compose up"></a>docker-compose up</h2><p>用来启动项目，比如我们现在有一个docker-compose.yml 文件，那我们进入到这个文件目录，执行<code>docker-compose up</code>就可以将项目依赖的镜像下载下来，并启动相应的容器服务。整个项目都启动起来了，直接使用就好了，可谓是相当强大了。</p>
+<p>docker-compose up -d  表示后台启动。</p>
+<h2 id="docker-compose-down"><a href="#docker-compose-down" class="headerlink" title="docker-compose down"></a>docker-compose down</h2><p>和 up 对应，用来停止我们的项目。</p>
+<h2 id="docker-compose-restart"><a href="#docker-compose-restart" class="headerlink" title="docker-compose restart"></a>docker-compose restart</h2><p>重启我们项目</p>
+<p>其他的也不说了，可以查看官网：</p>
+<p><a target="_blank" rel="noopener" href="https://docs.docker.com/compose/reference/overview/">https://docs.docker.com/compose/reference/overview/</a></p>
+<h1 id="demo"><a href="#demo" class="headerlink" title="demo"></a>demo</h1><p>光说不练假把式，我们上面说的一堆基础的知识，还是需要我们实践才行，不然我们不会有什么实质性的收获。所以接下来我们就搭建一个简单的demo。</p>
+<p>我们还是用前面的的hello的项目，我们对项目进行一些修改，增加 redis。<br>这里我就不具体的讲啦，有不会的可以看我这篇文章，写的很简单明了：</p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_27790011/article/details/98344732">三、Redis在SpringBoot中使用案例</a></p>
+<p>我们这里先在在pom.xml 中增加redis 依赖：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&lt;!--Redis使用starter--&gt;</span><br><span class="line">        &lt;dependency&gt;</span><br><span class="line">            &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;</span><br><span class="line">            &lt;artifactId&gt;spring-boot-starter-data-redis&lt;/artifactId&gt;</span><br><span class="line">        &lt;/dependency&gt;</span><br></pre></td></tr></table></figure>
+
+<p>在application.properties 中增加redis 配置</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">#配置redis</span><br><span class="line"># Redis数据库索引（默认为0）</span><br><span class="line">spring.redis.database=0  </span><br><span class="line"># Redis服务器地址</span><br><span class="line">spring.redis.host=192.168.252.53</span><br><span class="line"># Redis服务器连接端口</span><br><span class="line">spring.redis.port=6389  </span><br><span class="line"># Redis服务器连接密码（默认为空）</span><br><span class="line">spring.redis.password=</span><br><span class="line"># 连接池最大连接数（使用负值表示没有限制） 默认 8</span><br><span class="line">spring.redis.lettuce.pool.max-active=8</span><br><span class="line"># 连接池最大阻塞等待时间（使用负值表示没有限制） 默认 -1</span><br><span class="line">spring.redis.lettuce.pool.max-wait=-1</span><br><span class="line"># 连接池中的最大空闲连接 默认 8</span><br><span class="line">spring.redis.lettuce.pool.max-idle=8</span><br><span class="line"># 连接池中的最小空闲连接 默认 0</span><br><span class="line">spring.redis.lettuce.pool.min-idle=0</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>在controller 包中创建一个redisController 类</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">@RestController</span><br><span class="line">@RequestMapping(&quot;/redis&quot;)</span><br><span class="line">@Slf4j</span><br><span class="line">public class RedisController &#123;</span><br><span class="line"></span><br><span class="line">    @Autowired</span><br><span class="line">    private StringRedisTemplate stringRedisTemplate;</span><br><span class="line"></span><br><span class="line">    @RequestMapping(value = &quot;/add&quot;,method = RequestMethod.GET)</span><br><span class="line">    public String add(@RequestParam(value=&quot;key&quot;)String key,@RequestParam(value = &quot;value&quot;) String value)&#123;</span><br><span class="line">        ValueOperations ops=stringRedisTemplate.opsForValue();</span><br><span class="line">        ops.set(key,value);</span><br><span class="line">        return &quot;success&quot;;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @RequestMapping(value = &quot;/get&quot;,method = RequestMethod.GET)</span><br><span class="line">    public String get(@RequestParam(value = &quot;key&quot;)String key)&#123;</span><br><span class="line">        ValueOperations ops=stringRedisTemplate.opsForValue();</span><br><span class="line">        return (String) ops.get(key);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>好了，我们将项目打包成镜像，至于怎么打包成镜像上一篇我已经讲了，不会的可以查看:</p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_27790011/article/details/102729974#docker_162">三、DockerFile 定制属于自己的专属镜像</a></p>
+<h2 id="准备我们的redis-conf"><a href="#准备我们的redis-conf" class="headerlink" title="准备我们的redis.conf"></a>准备我们的redis.conf</h2><p>我们使用 redis 镜像，但是我们不想使用默认的配置，想要使用自己的配置启动redis。所以我们来复制一份redis.conf 。我就修改了</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">#设置redis 可以远程访问</span><br><span class="line">bind 0.0.0.0</span><br><span class="line">#后台启动</span><br><span class="line">daemonize yes</span><br></pre></td></tr></table></figure>
+<p><img src="https://img-blog.csdnimg.cn/20191108155950758.jpeg" alt="file"><br>redis.conf 放在我们上图的redis目录下。</p>
+<h2 id="docker-compose-yml-1"><a href="#docker-compose-yml-1" class="headerlink" title="docker-compose.yml"></a>docker-compose.yml</h2><p>我们来编写docker-compose.yml ，直接套用上面的模版。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">version: &quot;3&quot;</span><br><span class="line">  </span><br><span class="line">services:</span><br><span class="line">  webapp:</span><br><span class="line">    image: quellanan/hello:1.0.0</span><br><span class="line">    ports:</span><br><span class="line">      - &quot;9000:9000&quot;</span><br><span class="line">    volumes:</span><br><span class="line">      - &quot;/data&quot;</span><br><span class="line">    depends_on:</span><br><span class="line">      - redis</span><br><span class="line"></span><br><span class="line">  redis:</span><br><span class="line">    image: redis:latest</span><br><span class="line">    restart: always</span><br><span class="line">    ports:</span><br><span class="line">      - &quot;6389:6379&quot;</span><br><span class="line">    volumes:</span><br><span class="line">      - /redis/redis.conf:/etc/redis/redis.conf</span><br><span class="line">    command: redis-server /etc/redis/redis.conf</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>可以看到基本上是根据模版来的，指定我们镜像，端口，数据卷。<br>这里webapp 的没有什么好说的 ，上面都说了，一看就能懂，说一下redis的。<br>images 指定的镜像为redis:latest ，如果你本地没有这个镜像，就会从官网上下载。<br>restart:always 表示自动重启。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ports:&quot;6389:6379&quot;</span><br></pre></td></tr></table></figure>
+<p>表示镜像启动redis容器的端口是6379，映射到服务器的6389 端口，所以我们在项目配置的redis 端口应该是6389.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">volumes: /redis/redis.conf:/etc/redis/redis.conf</span><br></pre></td></tr></table></figure>
+<p>表示将 .&#x2F;redis&#x2F;redis.conf 文件加载到 容器中的 &#x2F;etc&#x2F;redis&#x2F;redis.conf 位置。<br>说明第一个路径是相对路径，第二个路径是绝对路径。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">command: redis-server /etc/redis/redis.conf</span><br></pre></td></tr></table></figure>
+<p>表示在启动redis 容器的时候会执行的命令。这样就可以实现启动redis镜像加载我们自己的配置文件了。</p>
+<h2 id="docker-compose-up-1"><a href="#docker-compose-up-1" class="headerlink" title="docker-compose up"></a>docker-compose up</h2><p>准备工作都做好了，开始我们大展拳脚，哈哈，其实不然，我们准备工作做好了，就已经成功一大半了，我们接下来要做的就是 就是通过docker-compose 启动镜像。我们直接在存放docker-compose.yml 目录下执行：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker-compose up</span><br></pre></td></tr></table></figure>
+<p><img src="https://img-blog.csdnimg.cn/20191108155951768.jpeg?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9xdWVsbGFuYW4uYmxvZy5jc2RuLm5ldA==,size_16,color_FFFFFF,t_70" alt="file"><br>这样我们就启动成功了。</p>
+<p>如果想后台启动的话输入：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker-compose up -d </span><br></pre></td></tr></table></figure>
+
+<h2 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h2><p>我们项目启动，现在来测试一下到底成功没有。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://192.168.252.53:9000/</span><br></pre></td></tr></table></figure>
+<p>这个是测试项目是正常启动了。<br><img src="https://img-blog.csdnimg.cn/20191108155951218.jpeg" alt="file"><br>我们接下来看看我们配置的redis 有没有成功。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">http://192.168.252.53:9000/redis/add?key=a&amp;value=123qaz</span><br><span class="line">http://192.168.252.53:9000/redis/get?key=a</span><br></pre></td></tr></table></figure>
+<p><img src="https://img-blog.csdnimg.cn/20191108155952431.jpeg" alt="file"><br><img src="https://img-blog.csdnimg.cn/20191108155952729.jpeg" alt="file"></p>
+<p>可以看到界面上接口没有问题了，redis已经已经生效了，我们还不太确定，可以去服务器上看下。<br><img src="https://img-blog.csdnimg.cn/20191108155952359.jpeg" alt="file">。本地没有装redis ，我们可以进入到redis容器中去查看。<br>操作如下：<br>先通过<code>docker ps </code>查看redis 容器id<br>然后通过下面命令进入容器。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker exec -it 容器id  /bin/bash</span><br></pre></td></tr></table></figure>
+<p>最后连接redis</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">redis-cli </span><br></pre></td></tr></table></figure>
+<p><img src="https://img-blog.csdnimg.cn/20191108155953281.jpeg" alt="file"></p>
+<h1 id="番外"><a href="#番外" class="headerlink" title="番外"></a>番外</h1><p>好了，就说这么多啦</p>
+<p>后续加油♡</p>
+<p>欢迎大家关注个人公众号 “程序员爱酸奶”</p>
+<p>分享各种学习资料，包含java，linux，大数据等。资料包含视频文档以及源码，同时分享本人及投递的优质技术博文。</p>
+<p>如果大家喜欢记得关注和分享哟❤</p>
+<p><img src="https://img-blog.csdnimg.cn/20191015213334732.jpeg?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzI3NzkwMDEx,size_16,color_FFFFFF,t_70" alt="file"></p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/docker/" rel="tag"># docker</a>
+              <a href="/tags/linux/" rel="tag"># linux</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2022/02/25/%E5%9B%9B%E3%80%81Spring%20Cloud%E4%B9%8B%E7%86%94%E6%96%AD%E5%A4%84%E7%90%86%20Hystrix/" rel="prev" title="四、Spring Cloud之熔断处理 Hystrix">
+                  <i class="fa fa-chevron-left"></i> 四、Spring Cloud之熔断处理 Hystrix
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2022/02/25/%E4%BA%94%E3%80%81Spring%20Cloud%E4%B9%8B%E7%BD%91%E5%85%B3%E6%9C%8D%E5%8A%A1%20zuul/" rel="next" title="五、Spring Cloud之网关服务 zuul">
+                  五、Spring Cloud之网关服务 zuul <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">John Doe</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.0.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.10.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
+
+  <meta name="description" content="前言先来说说问题吧，我们的项目在测试环境上搭建好了，也就是在内网上可以正常运行，但是呢，局方的人想要看一下效果先，那问题就来了，不在同一个局域网，他们访问不了我们的内网啊，现在又想看。这咋整。所以就有了这篇文章。这三个软件都差不多，都有一个免费的，我自己都试了一下，window和Linux的都可以，做演示的话问题不大。刚刚好满足要求。 官网ngrok:https:&#x2F;&#x2F;ngrok.com&#x2F;ngrok">
+<meta property="og:type" content="website">
+<meta property="og:title" content="内网穿透ngrok_ngrokcc_cpolar">
+<meta property="og:url" content="http://example.com/2019/09/05/%E5%86%85%E7%BD%91%E7%A9%BF%E9%80%8Fngrok_ngrokcc_cpolar/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="前言先来说说问题吧，我们的项目在测试环境上搭建好了，也就是在内网上可以正常运行，但是呢，局方的人想要看一下效果先，那问题就来了，不在同一个局域网，他们访问不了我们的内网啊，现在又想看。这咋整。所以就有了这篇文章。这三个软件都差不多，都有一个免费的，我自己都试了一下，window和Linux的都可以，做演示的话问题不大。刚刚好满足要求。 官网ngrok:https:&#x2F;&#x2F;ngrok.com&#x2F;ngrok">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20190905185742950.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzI3NzkwMDEx,size_16,color_FFFFFF,t_70">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20190905190106504.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzI3NzkwMDEx,size_16,color_FFFFFF,t_70">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20190905190543757.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzI3NzkwMDEx,size_16,color_FFFFFF,t_70">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20190906141633105.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20190906141742822.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzI3NzkwMDEx,size_16,color_FFFFFF,t_70">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/2019091922115335.jpeg?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzI3NzkwMDEx,size_16,color_FFFFFF,t_70">
+<meta property="article:published_time" content="2019-09-05T10:46:02.000Z">
+<meta property="article:modified_time" content="2022-02-25T07:14:51.814Z">
+<meta property="article:author" content="John Doe">
+<meta property="article:tag" content="内网穿透">
+<meta property="article:tag" content="ngrok">
+<meta property="article:tag" content="ngrokcc">
+<meta property="article:tag" content="cpolar">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://img-blog.csdnimg.cn/20190905185742950.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzI3NzkwMDEx,size_16,color_FFFFFF,t_70">
+
+
+<link rel="canonical" href="http://example.com/2019/09/05/%E5%86%85%E7%BD%91%E7%A9%BF%E9%80%8Fngrok_ngrokcc_cpolar/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"http://example.com/2019/09/05/%E5%86%85%E7%BD%91%E7%A9%BF%E9%80%8Fngrok_ngrokcc_cpolar/","path":"2019/09/05/内网穿透ngrok_ngrokcc_cpolar/","title":"内网穿透ngrok_ngrokcc_cpolar"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>内网穿透ngrok_ngrokcc_cpolar | Hexo</title>
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Hexo</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%89%8D%E8%A8%80"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%AE%98%E7%BD%91"><span class="nav-number">2.</span> <span class="nav-text">官网</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%AF%B4%E6%98%8E"><span class="nav-number">3.</span> <span class="nav-text">说明</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">4.</span> <span class="nav-text">总结</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%95%AA%E5%A4%96"><span class="nav-number">5.</span> <span class="nav-text">番外</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%86%8D%E7%95%AA%E5%A4%96"><span class="nav-number">6.</span> <span class="nav-text">再番外</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">John Doe</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">54</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+        <span class="site-state-item-count">13</span>
+        <span class="site-state-item-name">categories</span>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">35</span>
+        <span class="site-state-item-name">tags</span>
+      </div>
+  </nav>
+</div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2019/09/05/%E5%86%85%E7%BD%91%E7%A9%BF%E9%80%8Fngrok_ngrokcc_cpolar/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="John Doe">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          内网穿透ngrok_ngrokcc_cpolar
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2019-09-05 18:46:02" itemprop="dateCreated datePublished" datetime="2019-09-05T18:46:02+08:00">2019-09-05</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2022-02-25 15:14:51" itemprop="dateModified" datetime="2022-02-25T15:14:51+08:00">2022-02-25</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%BB%BA%E7%AB%99%E4%B9%8B%E8%B7%AF/" itemprop="url" rel="index"><span itemprop="name">建站之路</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>先来说说问题吧，我们的项目在测试环境上搭建好了，也就是在内网上可以正常运行，但是呢，局方的人想要看一下效果先，那问题就来了，不在同一个局域网，他们访问不了我们的内网啊，现在又想看。这咋整。所以就有了这篇文章。<br>这三个软件都差不多，都有一个免费的，我自己都试了一下，window和Linux的都可以，做演示的话问题不大。刚刚好满足要求。</p>
+<h1 id="官网"><a href="#官网" class="headerlink" title="官网"></a>官网</h1><p>ngrok:<a target="_blank" rel="noopener" href="https://ngrok.com/">https://ngrok.com/</a><br>ngrokc:<a target="_blank" rel="noopener" href="http://www.ngrok.cc/">http://www.ngrok.cc/</a><br>cpolar:<a target="_blank" rel="noopener" href="https://www.cpolar.com/">https://www.cpolar.com/</a></p>
+<p>大家对着官网教程来就可以了，无非都是注册会员，领取那个免费的authtoken.然后下载客户端，设置端口，启动项目，用域名进行访问。</p>
+<h1 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h1><p>1、ngrok 和 cpolar 基本用法都是一致的，都是生成一个authtoken ,然后设置一个ip和端口，会随机的生成一个http的域名和一个https 的域名随机访问。<br><img src="https://img-blog.csdnimg.cn/20190905185742950.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzI3NzkwMDEx,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>2、ngrokcc 是国内的一个网站，没有authtoken ,但是有隧道，需要你在控制台建好隧道，然后在客户端连接隧道id 就好了<br><img src="https://img-blog.csdnimg.cn/20190905190106504.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzI3NzkwMDEx,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./sunny clientid 隧道id</span><br></pre></td></tr></table></figure>
+<p><img src="https://img-blog.csdnimg.cn/20190905190543757.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzI3NzkwMDEx,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>使用起来还是比较简单，能满足我们将项目搭建在本地，用公网访问演示。</p>
+<h1 id="番外"><a href="#番外" class="headerlink" title="番外"></a>番外</h1><p>这几个是三个软件都是利用Nginx反向代理实现的。但是免费的只有一个隧道或者一个端口，这个时候我们可以在自己本地再搭建一个Nginx做虚拟主机，这样就可以自由飞翔了吧哈哈</p>
+<h1 id="再番外"><a href="#再番外" class="headerlink" title="再番外"></a>再番外</h1><p>因为看了一下官方文档，发现不仅可以代理一个端口网站，还能代理tcp协议。</p>
+<p>我来举一个例子。我有两台电脑，一台装的是win ,一台装的是Ubuntu，一般我都是把Ubuntu当做服务器用。两台电脑在同一个局域网直接用xhell 的ssh 连接起来当然很方便啦。但是我有时候需要把win 带到其他地方，那做服务器的那台电脑就不能访问啦，<br>所以我参考一下官网的，可以在用外网访问这台服务器啦。<br>操作也很简单，我三个也都测试了一下，用的是cpolar 的，感觉比ngrok 要稳定些。<br>1、在我们Ubuntu服务器上安装好cpolar客户端，然后认证tocken 这些和之前是一样哒。<br>2、</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cpolar tcp 22</span><br></pre></td></tr></table></figure>
+<p>就这么简单。<br><img src="https://img-blog.csdnimg.cn/20190906141633105.png" alt="在这里插入图片描述"></p>
+<p>然后在主机和端口号填上对应的就好了，就是这么简单。<br><img src="https://img-blog.csdnimg.cn/20190906141742822.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzI3NzkwMDEx,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<p>这样之后，就算两台电脑不在同一个局域网，也可以直接访问了，很实用。</p>
+<p>后续加油♡</p>
+<p>欢迎大家关注个人公众号 “程序员爱酸奶”</p>
+<p>分享各种学习资料，包含java，linux，大数据等。资料包含视频文档以及源码，同时分享本人及投递的优质技术博文。</p>
+<p>如果大家喜欢记得关注和分享哟❤<br><img src="https://img-blog.csdnimg.cn/2019091922115335.jpeg?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzI3NzkwMDEx,size_16,color_FFFFFF,t_70" alt="file"></p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E5%86%85%E7%BD%91%E7%A9%BF%E9%80%8F/" rel="tag"># 内网穿透</a>
+              <a href="/tags/ngrok/" rel="tag"># ngrok</a>
+              <a href="/tags/ngrokcc/" rel="tag"># ngrokcc</a>
+              <a href="/tags/cpolar/" rel="tag"># cpolar</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2019/09/03/%E5%85%AB%E3%80%81redis%E9%9B%86%E7%BE%A4/" rel="prev" title="八、redis集群">
+                  <i class="fa fa-chevron-left"></i> 八、redis集群
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2019/09/10/%E4%B8%80%E3%80%81%E8%AE%A9%E6%88%91%E4%BB%AC%E5%BC%80%E5%90%AF%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95%E4%B9%8B%E6%97%85/" rel="next" title="一、让我们开启单元测试之旅">
+                  一、让我们开启单元测试之旅 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">John Doe</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

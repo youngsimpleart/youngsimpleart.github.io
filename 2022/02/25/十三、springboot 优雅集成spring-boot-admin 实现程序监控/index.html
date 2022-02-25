@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.0.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.10.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
+
+  <meta name="description" content="前言我们知道项目的监控是尤为重要的，但是我们如果用jdk 自带的jconsole 和jvisualvm 的话会非常繁琐，且界面不是很友好。之前我们使用了spring boot 项目，但是都没有对项目有一个很好的监控。在spring 家族中有 spring-boot-admin 可以很好的帮我们起到监控微服务项目的作用。 spring-boot-admin 是一个针对 Spring Boot 的 A">
+<meta property="og:type" content="website">
+<meta property="og:title" content="十三、springboot 优雅集成spring-boot-admin 实现程序监控">
+<meta property="og:url" content="http://example.com/2022/02/25/%E5%8D%81%E4%B8%89%E3%80%81springboot%20%E4%BC%98%E9%9B%85%E9%9B%86%E6%88%90spring-boot-admin%20%E5%AE%9E%E7%8E%B0%E7%A8%8B%E5%BA%8F%E7%9B%91%E6%8E%A7/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="前言我们知道项目的监控是尤为重要的，但是我们如果用jdk 自带的jconsole 和jvisualvm 的话会非常繁琐，且界面不是很友好。之前我们使用了spring boot 项目，但是都没有对项目有一个很好的监控。在spring 家族中有 spring-boot-admin 可以很好的帮我们起到监控微服务项目的作用。 spring-boot-admin 是一个针对 Spring Boot 的 A">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20200102170007304.gif">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20200102171842713.gif">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20200102175113630.gif">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20200102175347605.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9xdWVsbGFuYW4uYmxvZy5jc2RuLm5ldA==,size_16,color_FFFFFF,t_70">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20200102175615565.gif">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20191015213334732.jpeg?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzI3NzkwMDEx,size_16,color_FFFFFF,t_70">
+<meta property="article:published_time" content="2022-02-25T12:54:08.628Z">
+<meta property="article:modified_time" content="2022-02-25T07:14:51.868Z">
+<meta property="article:author" content="John Doe">
+<meta property="article:tag" content="springboot">
+<meta property="article:tag" content="java">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://img-blog.csdnimg.cn/20200102170007304.gif">
+
+
+<link rel="canonical" href="http://example.com/2022/02/25/%E5%8D%81%E4%B8%89%E3%80%81springboot%20%E4%BC%98%E9%9B%85%E9%9B%86%E6%88%90spring-boot-admin%20%E5%AE%9E%E7%8E%B0%E7%A8%8B%E5%BA%8F%E7%9B%91%E6%8E%A7/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"http://example.com/2022/02/25/%E5%8D%81%E4%B8%89%E3%80%81springboot%20%E4%BC%98%E9%9B%85%E9%9B%86%E6%88%90spring-boot-admin%20%E5%AE%9E%E7%8E%B0%E7%A8%8B%E5%BA%8F%E7%9B%91%E6%8E%A7/","path":"2022/02/25/十三、springboot 优雅集成spring-boot-admin 实现程序监控/","title":"十三、springboot 优雅集成spring-boot-admin 实现程序监控"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>十三、springboot 优雅集成spring-boot-admin 实现程序监控 | Hexo</title>
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Hexo</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%89%8D%E8%A8%80"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#admin-server"><span class="nav-number">2.</span> <span class="nav-text">admin-server</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#pom-xml"><span class="nav-number">2.1.</span> <span class="nav-text">pom.xml</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%90%AF%E5%8A%A8%E7%B1%BB"><span class="nav-number">2.2.</span> <span class="nav-text">启动类</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE-security"><span class="nav-number">2.3.</span> <span class="nav-text">配置 security</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#admin-client"><span class="nav-number">3.</span> <span class="nav-text">admin-client</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#pom-xml-1"><span class="nav-number">3.1.</span> <span class="nav-text">pom.xml</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#application-properties"><span class="nav-number">3.2.</span> <span class="nav-text">application.properties</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%B5%8B%E8%AF%95"><span class="nav-number">4.</span> <span class="nav-text">测试</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%95%AA%E5%A4%96"><span class="nav-number">5.</span> <span class="nav-text">番外</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">John Doe</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">54</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+        <span class="site-state-item-count">13</span>
+        <span class="site-state-item-name">categories</span>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">35</span>
+        <span class="site-state-item-name">tags</span>
+      </div>
+  </nav>
+</div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2022/02/25/%E5%8D%81%E4%B8%89%E3%80%81springboot%20%E4%BC%98%E9%9B%85%E9%9B%86%E6%88%90spring-boot-admin%20%E5%AE%9E%E7%8E%B0%E7%A8%8B%E5%BA%8F%E7%9B%91%E6%8E%A7/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="John Doe">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          十三、springboot 优雅集成spring-boot-admin 实现程序监控
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+      
+
+      <time title="Created: 2022-02-25 20:54:08 / Modified: 15:14:51" itemprop="dateCreated datePublished" datetime="2022-02-25T20:54:08+08:00">2022-02-25</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/springBoot/" itemprop="url" rel="index"><span itemprop="name">springBoot</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>我们知道项目的监控是尤为重要的，但是我们如果用jdk 自带的jconsole 和jvisualvm 的话会非常繁琐，且界面不是很友好。之前我们使用了spring boot 项目，但是都没有对项目有一个很好的监控。在spring 家族中有 spring-boot-admin 可以很好的帮我们起到监控微服务项目的作用。</p>
+<p>spring-boot-admin 是一个针对 Spring Boot 的 Actuator 接口进行 UI 美化封装的监控工具，它可以在列表中浏览所有被监控 spring-boot 项目的基本信息、详细的 Health 信息、内存信息、JVM 信息、垃圾回收信息、各种配置信息（比如数据源、缓存列表和命中率）等，还可以直接修改 logger 的 level。</p>
+<p>spring-boot-admin 分为服务端和客户端。服务端是一个单独的微服务，用来查看监控的项目的运行情况，客户端是我们一个个的微服务项目。所以要想让我们的项目被服务端监控到，就需要将我们的服务注册到服务端去。</p>
+<p>好了，我们来动手试试吧。</p>
+<h1 id="admin-server"><a href="#admin-server" class="headerlink" title="admin-server"></a>admin-server</h1><p>我们先来搭建spring-boot-admin 的服务端，上面说了服务端是一个单独的项目。所以我们创建一个新的springboot 项目。创建好后，我们做一下修改。</p>
+<h2 id="pom-xml"><a href="#pom-xml" class="headerlink" title="pom.xml"></a>pom.xml</h2><p>在pom 文件中，我们引入 如下依赖</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br></pre></td><td class="code"><pre><span class="line">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</span><br><span class="line">&lt;project xmlns=&quot;http://maven.apache.org/POM/4.0.0&quot; xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;</span><br><span class="line">         xsi:schemaLocation=&quot;http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd&quot;&gt;</span><br><span class="line">    &lt;modelVersion&gt;4.0.0&lt;/modelVersion&gt;</span><br><span class="line">    &lt;parent&gt;</span><br><span class="line">        &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;</span><br><span class="line">        &lt;artifactId&gt;spring-boot-starter-parent&lt;/artifactId&gt;</span><br><span class="line">        &lt;version&gt;2.2.2.RELEASE&lt;/version&gt;</span><br><span class="line">        &lt;relativePath/&gt; &lt;!-- lookup parent from repository --&gt;</span><br><span class="line">    &lt;/parent&gt;</span><br><span class="line">    &lt;groupId&gt;com.quellanan&lt;/groupId&gt;</span><br><span class="line">    &lt;artifactId&gt;springbootadmin&lt;/artifactId&gt;</span><br><span class="line">    &lt;version&gt;0.0.1-SNAPSHOT&lt;/version&gt;</span><br><span class="line">    &lt;name&gt;springbootadmin&lt;/name&gt;</span><br><span class="line">    &lt;description&gt;springbootadmin project for Spring Boot&lt;/description&gt;</span><br><span class="line"></span><br><span class="line">    &lt;properties&gt;</span><br><span class="line">        &lt;java.version&gt;1.8&lt;/java.version&gt;</span><br><span class="line">        &lt;spring-boot-admin.version&gt;2.2.1&lt;/spring-boot-admin.version&gt;</span><br><span class="line">    &lt;/properties&gt;</span><br><span class="line"></span><br><span class="line">    &lt;dependencies&gt;</span><br><span class="line"></span><br><span class="line">        &lt;dependency&gt;</span><br><span class="line">            &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;</span><br><span class="line">            &lt;artifactId&gt;spring-boot-starter-web&lt;/artifactId&gt;</span><br><span class="line">        &lt;/dependency&gt;</span><br><span class="line"></span><br><span class="line">        &lt;dependency&gt;</span><br><span class="line">            &lt;groupId&gt;de.codecentric&lt;/groupId&gt;</span><br><span class="line">            &lt;artifactId&gt;spring-boot-admin-starter-server&lt;/artifactId&gt;</span><br><span class="line">        &lt;/dependency&gt;</span><br><span class="line"></span><br><span class="line">        &lt;dependency&gt;</span><br><span class="line">            &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;</span><br><span class="line">            &lt;artifactId&gt;spring-boot-starter-security&lt;/artifactId&gt;</span><br><span class="line">        &lt;/dependency&gt;</span><br><span class="line"></span><br><span class="line">    &lt;/dependencies&gt;</span><br><span class="line"></span><br><span class="line">    &lt;dependencyManagement&gt;</span><br><span class="line">        &lt;dependencies&gt;</span><br><span class="line">            &lt;dependency&gt;</span><br><span class="line">                &lt;groupId&gt;de.codecentric&lt;/groupId&gt;</span><br><span class="line">                &lt;artifactId&gt;spring-boot-admin-dependencies&lt;/artifactId&gt;</span><br><span class="line">                &lt;version&gt;$&#123;spring-boot-admin.version&#125;&lt;/version&gt;</span><br><span class="line">                &lt;type&gt;pom&lt;/type&gt;</span><br><span class="line">                &lt;scope&gt;import&lt;/scope&gt;</span><br><span class="line">            &lt;/dependency&gt;</span><br><span class="line">        &lt;/dependencies&gt;</span><br><span class="line">    &lt;/dependencyManagement&gt;</span><br><span class="line"></span><br><span class="line">    &lt;build&gt;</span><br><span class="line">        &lt;plugins&gt;</span><br><span class="line">            &lt;plugin&gt;</span><br><span class="line">                &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;</span><br><span class="line">                &lt;artifactId&gt;spring-boot-maven-plugin&lt;/artifactId&gt;</span><br><span class="line">            &lt;/plugin&gt;</span><br><span class="line">        &lt;/plugins&gt;</span><br><span class="line">    &lt;/build&gt;</span><br><span class="line">&lt;/project&gt;</span><br></pre></td></tr></table></figure>
+<p>上面是我整个的pom 文件，可以看到我引入了web 、admin-starter-server、security。<br>如果考虑其他的，可以只引用admin-starter-server 就可以实现效果。</p>
+<h2 id="启动类"><a href="#启动类" class="headerlink" title="启动类"></a>启动类</h2><p>在我们的启动类上加入@EnableAdminServer 注解，如果不加的话，项目可以正常启动，但是看不到任何东西。@EnableAdminServer 注解的作用就是启动监控。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">@SpringBootApplication</span><br><span class="line">@EnableAdminServer</span><br><span class="line">public class SpringbootadminApplication &#123;</span><br><span class="line">    public static void main(String[] args) &#123;</span><br><span class="line">        SpringApplication.run(SpringbootadminApplication.class, args);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="配置-security"><a href="#配置-security" class="headerlink" title="配置 security"></a>配置 security</h2><p>这样配置好之后，就可以启动项目啦，但是我们这里先不启动，因为上一节我们学习了，spring-boot-security .这里我们将它用起来。<br>我们前面已经引入了 security ,接下来，我们在application中增加配置</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">spring.security.user.name=admin</span><br><span class="line">spring.security.user.password=123456</span><br></pre></td></tr></table></figure>
+<p>表示这个用户才能访问。另外我们创建一个 SecurityConfig 类 继承 WebSecurityConfigurerAdapter 重写 configure(HttpSecurity http) 方法。代码如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">@Configuration</span><br><span class="line">public class SecurityConfig extends WebSecurityConfigurerAdapter &#123;</span><br><span class="line">    @Override</span><br><span class="line">    protected void configure(HttpSecurity http) throws Exception &#123;</span><br><span class="line">        SavedRequestAwareAuthenticationSuccessHandler successHandler</span><br><span class="line">                = new SavedRequestAwareAuthenticationSuccessHandler();</span><br><span class="line">        successHandler.setTargetUrlParameter(&quot;redirectTo&quot;);</span><br><span class="line">        successHandler.setDefaultTargetUrl(&quot;/&quot;);</span><br><span class="line">        http.authorizeRequests()</span><br><span class="line">                .antMatchers(&quot;/assets/**&quot;).permitAll()</span><br><span class="line">                .antMatchers(&quot;/login&quot;).permitAll()</span><br><span class="line">                .anyRequest().authenticated().and()</span><br><span class="line">                .formLogin().loginPage(&quot;/login&quot;)</span><br><span class="line">                .successHandler(successHandler).and()</span><br><span class="line">                .logout().logoutUrl(&quot;/logout&quot;).and()</span><br><span class="line">                .httpBasic().and()</span><br><span class="line">                .csrf()</span><br><span class="line">                .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())</span><br><span class="line">                .ignoringAntMatchers(</span><br><span class="line">                        &quot;/instances&quot;,</span><br><span class="line">                        &quot;/actuator/**&quot;</span><br><span class="line">                );</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>现在我们启动一下项目看看。启动项目后输入</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://localhost:8080</span><br></pre></td></tr></table></figure>
+<p>会跳转到 登录界面，进入主页现在是什么都没有的。<br><img src="https://img-blog.csdnimg.cn/20200102170007304.gif" alt="在这里插入图片描述"></p>
+<h1 id="admin-client"><a href="#admin-client" class="headerlink" title="admin-client"></a>admin-client</h1><p>到此我们服务端的配置就已经可以了，现在我们来配置一下客户端，我们随便找一个Springboot 项目，或者自己创建一个新的项目都可以。</p>
+<h2 id="pom-xml-1"><a href="#pom-xml-1" class="headerlink" title="pom.xml"></a>pom.xml</h2><p>我们先在pom 文件中加入admin-client 依赖，注意这里的版本需要和server 的版本一致。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&lt;dependency&gt;</span><br><span class="line">          &lt;groupId&gt;de.codecentric&lt;/groupId&gt;</span><br><span class="line">          &lt;artifactId&gt;spring-boot-admin-starter-client&lt;/artifactId&gt;</span><br><span class="line">          &lt;version&gt;2.2.1&lt;/version&gt;</span><br><span class="line">      &lt;/dependency&gt;</span><br></pre></td></tr></table></figure>
+
+<h2 id="application-properties"><a href="#application-properties" class="headerlink" title="application.properties"></a>application.properties</h2><p>然后我们在 application.properties 文件中加入如下配置。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">spring.boot.admin.client.url=http://localhost:8080</span><br><span class="line">management.endpoints.web.exposure.include=*</span><br><span class="line">spring.application.name=sdwlzlapp-file</span><br><span class="line">spring.boot.admin.client.username=admin</span><br><span class="line">spring.boot.admin.client.password=123456</span><br></pre></td></tr></table></figure>
+<p>spring.boot.admin.client.url  指向我们服务端的项目接口路径。<br>management.endpoints.web.exposure.include 表示将所有端口都暴露出来，可以被监控到。<br>spring.application.name 表示改项目在spring-boot-admin 上的的显示名称。<br>spring.boot.admin.client.username 和password 就是设置的用户名和密码了，这里需要注意的是，如果admin-server 中没有集成 security 的话，不用配置用户名和密码也可以注册进去，在服务端可以监控到，但如果admin-server 集成了security，就需要保证client 中配置的用户名和server 中配置的用户名密码保持一致。</p>
+<h1 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h1><p>配置了上面这些，就就可以将项目注册到admin-server 中啦，我们启动一下项目。<br><img src="https://img-blog.csdnimg.cn/20200102171842713.gif" alt="在这里插入图片描述"></p>
+<p>现在还有一个问题，如果我们项目本身就集成的安全框架，比如security ，没有登录的话不能访问接口，那这样的项目怎么被admin-server 监控到呢？比如就我们上节将的security 的demo ，我们注册进来，虽然监控到了，但是是一个失败的状态。<br><img src="https://img-blog.csdnimg.cn/20200102175113630.gif" alt="在这里插入图片描述"><br>可以看到，不难发现问题，那就是监控的接口也被项目本身拦截了，所以才导致是失败的状态，那要怎么修改了呢，其实也好处理，将这几个接口放开就可以了。我们在项目的SecurityConfig 类中configure(HttpSecurity http)加上<br><img src="https://img-blog.csdnimg.cn/20200102175347605.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9xdWVsbGFuYW4uYmxvZy5jc2RuLm5ldA==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>代码如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">@Override</span><br><span class="line">    protected void configure(HttpSecurity http) throws Exception &#123;</span><br><span class="line">        http.authorizeRequests()</span><br><span class="line">            .antMatchers(&quot;/&quot;, &quot;/hello&quot;).permitAll()</span><br><span class="line">            .antMatchers( &quot;/actuator/**&quot;).permitAll()</span><br><span class="line">            .antMatchers( &quot;/instances&quot;).permitAll()</span><br><span class="line">            .anyRequest().authenticated()</span><br><span class="line">            .and()</span><br><span class="line">            .formLogin()</span><br><span class="line">            //.loginPage(&quot;/login&quot;)</span><br><span class="line">            .permitAll()</span><br><span class="line">            .and()</span><br><span class="line">            .logout()</span><br><span class="line">            .permitAll();</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>这样我们重启项目，就发现可以监控成功了。<br><img src="https://img-blog.csdnimg.cn/20200102175615565.gif" alt="在这里插入图片描述"></p>
+<h1 id="番外"><a href="#番外" class="headerlink" title="番外"></a>番外</h1><p> 到此为止，我们也算是将spring-boot-admin的大致功能演示了下。</p>
+<p> 代码上传到github：<br><a target="_blank" rel="noopener" href="https://github.com/QuellanAn/springbootadmin">https://github.com/QuellanAn/springbootadmin</a></p>
+<p>后续加油♡</p>
+<p>欢迎大家关注个人公众号 “程序员爱酸奶”</p>
+<p>分享各种学习资料，包含java，linux，大数据等。资料包含视频文档以及源码，同时分享本人及投递的优质技术博文。</p>
+<p>如果大家喜欢记得关注和分享哟❤</p>
+<p><img src="https://img-blog.csdnimg.cn/20191015213334732.jpeg?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzI3NzkwMDEx,size_16,color_FFFFFF,t_70" alt="file"></p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/springboot/" rel="tag"># springboot</a>
+              <a href="/tags/java/" rel="tag"># java</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2022/02/25/%E5%8D%81%E4%BA%8C%E3%80%81SpringBoot%20%E4%BC%98%E9%9B%85%E7%9A%84%E9%9B%86%E6%88%90Spring%20Security/" rel="prev" title="十二、SpringBoot 优雅的集成Spring Security">
+                  <i class="fa fa-chevron-left"></i> 十二、SpringBoot 优雅的集成Spring Security
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2022/02/25/%E5%8D%81%E4%B8%80%E3%80%81springboot%20%E9%85%8D%E7%BD%AElog4j2%E4%BB%A5%E5%8F%8A%E6%89%93%E5%8C%85%E6%88%90zip%E6%96%87%E4%BB%B6/" rel="next" title="十一、springboot 配置log4j2以及打包成zip文件">
+                  十一、springboot 配置log4j2以及打包成zip文件 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">John Doe</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

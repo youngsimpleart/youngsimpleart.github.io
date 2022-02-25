@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.0.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.10.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
+
+  <meta name="description" content="前言前面我们讲了微服务的注册中心、负载均衡、熔断处理、网管服务。接下来我们讲配置中心，为什么要用配置中心呢？其实我们接触一段时间就可以发现，我们的项目还是非常多的，每个项目都有自己的一份配置，这样管理起来就显得很不方便了，所以微服务中就提供了config 配置中心，将所有服务的配置都集中在config 服务中，这样方便统一管理。 怎么说呢？就好比每个项目都比如一个房间，每个房间都需要一把钥匙才能开">
+<meta property="og:type" content="website">
+<meta property="og:title" content="六、Spring Cloud之配置中心config">
+<meta property="og:url" content="http://example.com/2022/02/25/%E5%85%AD%E3%80%81Spring%20Cloud%E4%B9%8B%E9%85%8D%E7%BD%AE%E4%B8%AD%E5%BF%83config/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="前言前面我们讲了微服务的注册中心、负载均衡、熔断处理、网管服务。接下来我们讲配置中心，为什么要用配置中心呢？其实我们接触一段时间就可以发现，我们的项目还是非常多的，每个项目都有自己的一份配置，这样管理起来就显得很不方便了，所以微服务中就提供了config 配置中心，将所有服务的配置都集中在config 服务中，这样方便统一管理。 怎么说呢？就好比每个项目都比如一个房间，每个房间都需要一把钥匙才能开">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20200128095839596.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20200128144254202.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20200128145054916.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20200128145547965.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9xdWVsbGFuYW4uYmxvZy5jc2RuLm5ldA==,size_16,color_FFFFFF,t_70">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20200128150300869.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9xdWVsbGFuYW4uYmxvZy5jc2RuLm5ldA==,size_16,color_FFFFFF,t_70">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20191015213334732.jpeg?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzI3NzkwMDEx,size_16,color_FFFFFF,t_70">
+<meta property="article:published_time" content="2022-02-25T12:54:08.502Z">
+<meta property="article:modified_time" content="2022-02-25T07:14:51.760Z">
+<meta property="article:author" content="John Doe">
+<meta property="article:tag" content="java">
+<meta property="article:tag" content="springCloud">
+<meta property="article:tag" content="zuul">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://img-blog.csdnimg.cn/20200128095839596.png">
+
+
+<link rel="canonical" href="http://example.com/2022/02/25/%E5%85%AD%E3%80%81Spring%20Cloud%E4%B9%8B%E9%85%8D%E7%BD%AE%E4%B8%AD%E5%BF%83config/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"http://example.com/2022/02/25/%E5%85%AD%E3%80%81Spring%20Cloud%E4%B9%8B%E9%85%8D%E7%BD%AE%E4%B8%AD%E5%BF%83config/","path":"2022/02/25/六、Spring Cloud之配置中心config/","title":"六、Spring Cloud之配置中心config"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>六、Spring Cloud之配置中心config | Hexo</title>
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Hexo</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%89%8D%E8%A8%80"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE%E4%B8%AD%E5%BF%83%E6%9C%8D%E5%8A%A1%E7%AB%AF"><span class="nav-number">2.</span> <span class="nav-text">配置中心服务端</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%98%A0%E5%85%A5config-server-%E4%BE%9D%E8%B5%96"><span class="nav-number">2.1.</span> <span class="nav-text">映入config-server 依赖</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%90%AF%E5%8A%A8%E7%B1%BB"><span class="nav-number">2.2.</span> <span class="nav-text">启动类</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6"><span class="nav-number">2.3.</span> <span class="nav-text">配置文件</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%AE%A2%E6%88%B7%E7%AB%AF%E9%85%8D%E7%BD%AE"><span class="nav-number">3.</span> <span class="nav-text">客户端配置</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#pom-xml"><span class="nav-number">3.1.</span> <span class="nav-text">pom.xml</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#bootstrap-properties"><span class="nav-number">3.2.</span> <span class="nav-text">bootstrap.properties</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%B5%8B%E8%AF%95"><span class="nav-number">4.</span> <span class="nav-text">测试</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%95%AA%E5%A4%96"><span class="nav-number">5.</span> <span class="nav-text">番外</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">John Doe</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">54</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+        <span class="site-state-item-count">13</span>
+        <span class="site-state-item-name">categories</span>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">35</span>
+        <span class="site-state-item-name">tags</span>
+      </div>
+  </nav>
+</div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2022/02/25/%E5%85%AD%E3%80%81Spring%20Cloud%E4%B9%8B%E9%85%8D%E7%BD%AE%E4%B8%AD%E5%BF%83config/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="John Doe">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          六、Spring Cloud之配置中心config
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+      
+
+      <time title="Created: 2022-02-25 20:54:08 / Modified: 15:14:51" itemprop="dateCreated datePublished" datetime="2022-02-25T20:54:08+08:00">2022-02-25</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/springCloud/" itemprop="url" rel="index"><span itemprop="name">springCloud</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>前面我们讲了微服务的注册中心、负载均衡、熔断处理、网管服务。接下来我们讲配置中心，为什么要用配置中心呢？<br>其实我们接触一段时间就可以发现，我们的项目还是非常多的，每个项目都有自己的一份配置，这样管理起来就显得很不方便了，所以微服务中就提供了config 配置中心，将所有服务的配置都集中在config 服务中，这样方便统一管理。</p>
+<p>怎么说呢？就好比每个项目都比如一个房间，每个房间都需要一把钥匙才能开启。而config 则是管理这些钥匙的，好比钥匙链，想要启动那个项目，就需要先从config中获取对应的钥匙，然后启动项目。</p>
+<p>下面让我们来看下怎样部署一个config吧。配置中心分为服务端和客户端，和eureka 有点像，服务端是一个单独的项目，用来管理其他服务的配置，其他的服务就是客户端。</p>
+<h1 id="配置中心服务端"><a href="#配置中心服务端" class="headerlink" title="配置中心服务端"></a>配置中心服务端</h1><h2 id="映入config-server-依赖"><a href="#映入config-server-依赖" class="headerlink" title="映入config-server 依赖"></a>映入config-server 依赖</h2><p>首先我们创建一个config 的子模块，用来做config 服务端，然后在pom.xml 文件中加入config-server依赖</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&lt;dependency&gt;</span><br><span class="line">	&lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;</span><br><span class="line">	&lt;artifactId&gt;spring-cloud-config-server&lt;/artifactId&gt;</span><br><span class="line">&lt;/dependency&gt;</span><br></pre></td></tr></table></figure>
+
+<h2 id="启动类"><a href="#启动类" class="headerlink" title="启动类"></a>启动类</h2><p>在启动类中，我们加入@EnableConfigServer 注解<br><img src="https://img-blog.csdnimg.cn/20200128095839596.png" alt="在这里插入图片描述"></p>
+<h2 id="配置文件"><a href="#配置文件" class="headerlink" title="配置文件"></a>配置文件</h2><p>在配置文件中我们加入如下配置：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">server.port=9008</span><br><span class="line">spring.application.name=config-server</span><br><span class="line"></span><br><span class="line">#使用本地属性文件</span><br><span class="line">spring.profiles.active = native</span><br><span class="line"></span><br><span class="line">#属性文件地址，只要指定文件夹的路径</span><br><span class="line">spring.cloud.config.server.native.searchLocations=classpath:/properties</span><br></pre></td></tr></table></figure>
+<p>这里我们spring.profiles.active &#x3D; native 表示你从本地加载配置文件，后面我们再从git 上加载配置文件。<br>如果不配置加载文件的地址，就会从src&#x2F;main&#x2F;resources 中加载文件。我这里配置了从properties文件夹下加载，所以在resources 文件夹下创建一个properties 文件夹。我们一eureka-server 服务为例。我们将这个项目的配置放到properties 文件夹下，并改名为<br>quellanan-eurekaserver.properties<br><img src="https://img-blog.csdnimg.cn/20200128144254202.png" alt="在这里插入图片描述"></p>
+<h1 id="客户端配置"><a href="#客户端配置" class="headerlink" title="客户端配置"></a>客户端配置</h1><p>好了，上面的服务端就已经配置好了，接下来我们来配置客户端。</p>
+<h2 id="pom-xml"><a href="#pom-xml" class="headerlink" title="pom.xml"></a>pom.xml</h2><p>在pom.xml 文件中引入config 依赖</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&lt;dependency&gt;</span><br><span class="line">          &lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;</span><br><span class="line">          &lt;artifactId&gt;spring-cloud-starter-config&lt;/artifactId&gt;</span><br><span class="line">      &lt;/dependency&gt;</span><br></pre></td></tr></table></figure>
+
+<h2 id="bootstrap-properties"><a href="#bootstrap-properties" class="headerlink" title="bootstrap.properties"></a>bootstrap.properties</h2><p>在resources 目录下创建一个 bootstrap.properties 文件，至于为什么要是这个而不是application.properties 文件，是由加载机制决定的，加载的时候会先加载bootstrap.properties 文件，然后加载application.properties ，<br>文件内容如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">spring.application.name=quellanan</span><br><span class="line">spring.cloud.config.profile=eurekaserver</span><br><span class="line">spring.cloud.config.label=master</span><br><span class="line">spring.cloud.config.uri=http://localhost:9008/</span><br></pre></td></tr></table></figure>
+<p><img src="https://img-blog.csdnimg.cn/20200128145054916.png" alt="在这里插入图片描述"><br>在本地也是一样的，spring.application.name和spring.cloud.config.profile拼起来就是文件名称。</p>
+<h1 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h1><p>好了，服务端和客户端都配置好了，我们现在先将客户端的application.properties 文件删除掉，然后启动这两个项目，先启动config。<br><img src="https://img-blog.csdnimg.cn/20200128145547965.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9xdWVsbGFuYW4uYmxvZy5jc2RuLm5ldA==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>可以看到eureka-server 成功的从config 中加载到了配置文件并启动了项目。<br><img src="https://img-blog.csdnimg.cn/20200128150300869.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9xdWVsbGFuYW4uYmxvZy5jc2RuLm5ldA==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<h1 id="番外"><a href="#番外" class="headerlink" title="番外"></a>番外</h1><p> 就这样简单的一个配置中心就已经实现了，最后说一个，既然我们有配置中心，那我们按在项目本身的application.properties 写的配置会加载么？答案是会加载的，至于比配置中心先加载还是后加载，我个人偏向于后加载，在application.properties 中写的属性可以覆盖配置中心中的属性。但是建议，依然使用了配置中心，就希望将所有的配置都放到配置中心里面，不要单独的在项目中新增配置，这样会增加管理的成本。</p>
+<p> 代码上传到github：<br> <a target="_blank" rel="noopener" href="https://github.com/QuellanAn/SpringCloud">https://github.com/QuellanAn/SpringCloud</a></p>
+<p>后续加油♡</p>
+<p>欢迎大家关注个人公众号 “程序员爱酸奶”</p>
+<p>分享各种学习资料，包含java，linux，大数据等。资料包含视频文档以及源码，同时分享本人及投递的优质技术博文。</p>
+<p>如果大家喜欢记得关注和分享哟❤</p>
+<p><img src="https://img-blog.csdnimg.cn/20191015213334732.jpeg?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzI3NzkwMDEx,size_16,color_FFFFFF,t_70" alt="file"></p>
+<p><a target="_blank" rel="noopener" href="https://quellanan.blog.csdn.net/article/details/104093297">阅读原文</a></p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/java/" rel="tag"># java</a>
+              <a href="/tags/springCloud/" rel="tag"># springCloud</a>
+              <a href="/tags/zuul/" rel="tag"># zuul</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2022/02/25/%E4%B9%9D%E3%80%81Spring%20Boot%20%E4%BC%98%E9%9B%85%E7%9A%84%E5%AE%9E%E7%8E%B0CORS%E8%B7%A8%E5%9F%9F/" rel="prev" title="九、Spring Boot 优雅的实现CORS跨域">
+                  <i class="fa fa-chevron-left"></i> 九、Spring Boot 优雅的实现CORS跨域
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2022/02/25/%E5%85%AD%E3%80%81springboot%20%E7%AE%80%E5%8D%95%E4%BC%98%E9%9B%85%E6%98%AF%E5%AE%9E%E7%8E%B0%E7%9F%AD%E4%BF%A1%E6%9C%8D%E5%8A%A1/" rel="next" title="六、springboot 简单优雅是实现短信服务">
+                  六、springboot 简单优雅是实现短信服务 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">John Doe</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

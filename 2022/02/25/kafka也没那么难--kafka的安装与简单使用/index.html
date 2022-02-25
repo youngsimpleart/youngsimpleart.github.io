@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.0.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.10.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
+
+  <meta name="description" content="前言前短时间在腾讯云上买了一个linux 服务器，决心把kafka这一模快的知识补充起来啦。所以就搞起来。 安装安装算是比较简单的，可以直接用wget 下载，也可以将安装包下载下来，上传到服务器上，都是一样的。kafka 安装包网址： 1http:&#x2F;&#x2F;mirror.bit.edu.cn&#x2F;apache&#x2F;kafka 我选择的版本2.4.0： 1wget http:&#x2F;&#x2F;mirror.bit.edu.cn">
+<meta property="og:type" content="website">
+<meta property="og:title" content="kafka也没那么难--kafka的安装与简单使用">
+<meta property="og:url" content="http://example.com/2022/02/25/kafka%E4%B9%9F%E6%B2%A1%E9%82%A3%E4%B9%88%E9%9A%BE--kafka%E7%9A%84%E5%AE%89%E8%A3%85%E4%B8%8E%E7%AE%80%E5%8D%95%E4%BD%BF%E7%94%A8/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="前言前短时间在腾讯云上买了一个linux 服务器，决心把kafka这一模快的知识补充起来啦。所以就搞起来。 安装安装算是比较简单的，可以直接用wget 下载，也可以将安装包下载下来，上传到服务器上，都是一样的。kafka 安装包网址： 1http:&#x2F;&#x2F;mirror.bit.edu.cn&#x2F;apache&#x2F;kafka 我选择的版本2.4.0： 1wget http:&#x2F;&#x2F;mirror.bit.edu.cn">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20200224164300595.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20200224164818481.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20200224165257866.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzI3NzkwMDEx,size_16,color_FFFFFF,t_70">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/2020022417164730.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzI3NzkwMDEx,size_16,color_FFFFFF,t_70">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20200224172818867.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzI3NzkwMDEx,size_16,color_FFFFFF,t_70">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20200225101804919.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzI3NzkwMDEx,size_16,color_FFFFFF,t_70">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20200224171905610.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzI3NzkwMDEx,size_16,color_FFFFFF,t_70">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20200224174917296.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzI3NzkwMDEx,size_16,color_FFFFFF,t_70">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/2020022511055970.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20200225111026371.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/2020022513250510.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20200225133001323.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20200225173945793.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzI3NzkwMDEx,size_16,color_FFFFFF,t_70">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/2020022517592263.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20200225180004487.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzI3NzkwMDEx,size_16,color_FFFFFF,t_70">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20200225180038546.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20200225180717810.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzI3NzkwMDEx,size_16,color_FFFFFF,t_70">
+<meta property="article:published_time" content="2022-02-25T12:54:08.843Z">
+<meta property="article:modified_time" content="2022-02-25T07:14:51.052Z">
+<meta property="article:author" content="John Doe">
+<meta property="article:tag" content="java">
+<meta property="article:tag" content="springCloud">
+<meta property="article:tag" content="kafka">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://img-blog.csdnimg.cn/20200224164300595.png">
+
+
+<link rel="canonical" href="http://example.com/2022/02/25/kafka%E4%B9%9F%E6%B2%A1%E9%82%A3%E4%B9%88%E9%9A%BE--kafka%E7%9A%84%E5%AE%89%E8%A3%85%E4%B8%8E%E7%AE%80%E5%8D%95%E4%BD%BF%E7%94%A8/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"http://example.com/2022/02/25/kafka%E4%B9%9F%E6%B2%A1%E9%82%A3%E4%B9%88%E9%9A%BE--kafka%E7%9A%84%E5%AE%89%E8%A3%85%E4%B8%8E%E7%AE%80%E5%8D%95%E4%BD%BF%E7%94%A8/","path":"2022/02/25/kafka也没那么难--kafka的安装与简单使用/","title":"kafka也没那么难--kafka的安装与简单使用"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>kafka也没那么难--kafka的安装与简单使用 | Hexo</title>
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Hexo</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%89%8D%E8%A8%80"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%AE%89%E8%A3%85"><span class="nav-number">2.</span> <span class="nav-text">安装</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%AE%89%E8%A3%85%E5%8C%85%E6%96%87%E4%BB%B6"><span class="nav-number">3.</span> <span class="nav-text">安装包文件</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#bin-%E7%9B%AE%E5%BD%95"><span class="nav-number">3.1.</span> <span class="nav-text">bin 目录</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#config-%E7%9B%AE%E5%BD%95"><span class="nav-number">3.2.</span> <span class="nav-text">config 目录</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#server-propertie"><span class="nav-number">3.2.1.</span> <span class="nav-text">server.propertie</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#zookeeper-properties"><span class="nav-number">3.2.2.</span> <span class="nav-text">zookeeper.properties</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AE%80%E5%8D%95%E6%93%8D%E4%BD%9C"><span class="nav-number">4.</span> <span class="nav-text">简单操作</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#zookeeper"><span class="nav-number">4.1.</span> <span class="nav-text">zookeeper</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#kafka-%E6%9C%8D%E5%8A%A1"><span class="nav-number">4.2.</span> <span class="nav-text">kafka 服务</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#topic"><span class="nav-number">4.3.</span> <span class="nav-text">topic</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#producer"><span class="nav-number">4.4.</span> <span class="nav-text">producer</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#consumer"><span class="nav-number">4.5.</span> <span class="nav-text">consumer</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Springboot%E6%95%B4%E5%90%88%E4%BD%BF%E7%94%A8kafka"><span class="nav-number">5.</span> <span class="nav-text">Springboot整合使用kafka</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#produecer"><span class="nav-number">5.1.</span> <span class="nav-text">produecer</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#consumer-1"><span class="nav-number">5.2.</span> <span class="nav-text">consumer</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">John Doe</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">54</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+        <span class="site-state-item-count">13</span>
+        <span class="site-state-item-name">categories</span>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">35</span>
+        <span class="site-state-item-name">tags</span>
+      </div>
+  </nav>
+</div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2022/02/25/kafka%E4%B9%9F%E6%B2%A1%E9%82%A3%E4%B9%88%E9%9A%BE--kafka%E7%9A%84%E5%AE%89%E8%A3%85%E4%B8%8E%E7%AE%80%E5%8D%95%E4%BD%BF%E7%94%A8/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="John Doe">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          kafka也没那么难--kafka的安装与简单使用
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+      
+
+      <time title="Created: 2022-02-25 20:54:08 / Modified: 15:14:51" itemprop="dateCreated datePublished" datetime="2022-02-25T20:54:08+08:00">2022-02-25</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/springCloud/" itemprop="url" rel="index"><span itemprop="name">springCloud</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>前短时间在腾讯云上买了一个linux 服务器，决心把kafka这一模快的知识补充起来啦。所以就搞起来。</p>
+<h1 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h1><p>安装算是比较简单的，可以直接用wget 下载，也可以将安装包下载下来，上传到服务器上，都是一样的。<br>kafka 安装包网址：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://mirror.bit.edu.cn/apache/kafka</span><br></pre></td></tr></table></figure>
+<p>我选择的版本2.4.0：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">wget http://mirror.bit.edu.cn/apache/kafka/2.4.0/kafka_2.13-2.4.0.tgz </span><br></pre></td></tr></table></figure>
+
+<p>下载zookeeper ,这个暂时不用也可以，kafka 中自带了zookeeper，暂时学习也可以直接用。<br>zookeeper 安装包网址：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://mirror.bit.edu.cn/apache/zookeeper</span><br></pre></td></tr></table></figure>
+<p>我这里选择的是3.5.6</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://mirror.bit.edu.cn/apache/zookeeper/zookeeper-3.5.6/apache-zookeeper-3.5.6.tar.gz  </span><br></pre></td></tr></table></figure>
+<p>将下载好了压缩包，解压就安装成功可以用了，可以直接运行的。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">tar -zxvf apache-zookeeper-3.5.6.tar.gz  </span><br><span class="line">tar -zxvf kafka_2.13-2.4.0.tgz</span><br></pre></td></tr></table></figure>
+<p>这里需要说明的是，需要jdk 环境，我直接装的openjdk8,一样可以用。<br><img src="https://img-blog.csdnimg.cn/20200224164300595.png" alt="在这里插入图片描述"></p>
+<h1 id="安装包文件"><a href="#安装包文件" class="headerlink" title="安装包文件"></a>安装包文件</h1><p>我们解压后的kafka 进文件夹，如下目录。我们主要用到的就是bin和config 这两个目录。<br><img src="https://img-blog.csdnimg.cn/20200224164818481.png" alt="在这里插入图片描述"></p>
+<h2 id="bin-目录"><a href="#bin-目录" class="headerlink" title="bin 目录"></a>bin 目录</h2><p>bin 文件夹下都是一些执行的命令文件，我们暂时会用到图中圈出的这几个命令。具体用法后面再讲，先说说这几个分别干啥。<br><img src="https://img-blog.csdnimg.cn/20200224165257866.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzI3NzkwMDEx,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>1是消费者连接topic 消费消息的命令。<br>2是生产者连接topic 推送消息的命令。<br>3分别是启动和停止kafka服务的。<br>4是操作topic 的指令，比如查看topic 列表或者删除topic<br>5分别是启动和停止zookeeperd服务，这里的zookeeper 是kafka 自带的。</p>
+<h2 id="config-目录"><a href="#config-目录" class="headerlink" title="config 目录"></a>config 目录</h2><p>我们再来看看config 里面的文件。我们主要就用到server.propertie 和zookeeper.properties<br><img src="https://img-blog.csdnimg.cn/2020022417164730.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzI3NzkwMDEx,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<h3 id="server-propertie"><a href="#server-propertie" class="headerlink" title="server.propertie"></a>server.propertie</h3><p>server.propertie 是启动kafka 时加载的配置文件。点击去看看，基本要改的就是下面这两个地方。<br>每一个broker都需要一个标识符，使用broker.id来表示。它的默认值是0，也可以被设置成任意其它整数。这个值在整个kafka集群里必须是唯一的。这个值可以任意选定。我这里设置的broker.id&#x3D;1</p>
+<p><img src="https://img-blog.csdnimg.cn/20200224172818867.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzI3NzkwMDEx,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>还有kafka 默认启动服务的默认端口是9092.如果我们想要修改的话，就需要在server.propertie 中加上</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">port = 9093</span><br></pre></td></tr></table></figure>
+<p>当然改了这里，还得改其他对应配置文件的连接。这里是网上截图的。<br><img src="https://img-blog.csdnimg.cn/20200225101804919.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzI3NzkwMDEx,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<h3 id="zookeeper-properties"><a href="#zookeeper-properties" class="headerlink" title="zookeeper.properties"></a>zookeeper.properties</h3><p>zookeeper.connect 主要配置 zookeeper的链接。如果我们在其他地方安装的zookeeper ,就需要修改这里的配置了。<br><img src="https://img-blog.csdnimg.cn/20200224171905610.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzI3NzkwMDEx,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>zookeeper.properties 文件是启动kafka 自带的zookeeper 时加载的配置。<br>里面的配置就比较少了，主要是<br><img src="https://img-blog.csdnimg.cn/20200224174917296.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzI3NzkwMDEx,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>libs 文件夹是kafka 运行依赖的jar 包，我们可以不用管，logs是kafka 运行产生的日志，我们排查问题时用到，暂时也不用管。</p>
+<h1 id="简单操作"><a href="#简单操作" class="headerlink" title="简单操作"></a>简单操作</h1><h2 id="zookeeper"><a href="#zookeeper" class="headerlink" title="zookeeper"></a>zookeeper</h2><p>我们按顺序来，因为kafka 启动要依赖zookeeper服务。所以我们来看zookeeper的命令。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"># 启动zookeeper 服务</span><br><span class="line">bin/zookeeper-server-start.sh ./config/zookeeper.properties</span><br><span class="line"></span><br><span class="line"># 停止zookeeper 服务</span><br><span class="line">bin/zookeeper-server-stop.sh</span><br></pre></td></tr></table></figure>
+
+<h2 id="kafka-服务"><a href="#kafka-服务" class="headerlink" title="kafka 服务"></a>kafka 服务</h2><p>启动好zookeeper 后，我们来启动kafka 服务。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">bin/kafka-server-start.sh ./config/server.properties</span><br></pre></td></tr></table></figure>
+<p>关闭kafka 服务命令</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">bin/kafka-server-stop.sh </span><br></pre></td></tr></table></figure>
+
+<h2 id="topic"><a href="#topic" class="headerlink" title="topic"></a>topic</h2><p>启动好kafka 服务后，我们就可以创建topic 啦。创建topic的命令</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">bin/kafka-topics.sh --create --zookeeper localhost:2181 --replication-factor 1 --partitions 1 --topic test1</span><br></pre></td></tr></table></figure>
+<p>这里可以看到创建topic 的命令算是比较复杂的， –zookeeper localhost:2181是指定zookeeper 服务。-replication-factor是指创建分区。<br>partitions 是创建备份。test1是topic 名称。</p>
+<p>我们在创建一个tpoic test2. 然后查看topic 列表,需要指定zookeeper 连接</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">bin/kafka-topics.sh --list --zookeeper localhost:2181</span><br></pre></td></tr></table></figure>
+<p><img src="https://img-blog.csdnimg.cn/2020022511055970.png" alt="在这里插入图片描述"><br>删除一个topic,需要指定zookeeper 和删除的topic</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">bin/kafka-topics.sh --delete --topic quellanan --zookeeper localhost:2181</span><br></pre></td></tr></table></figure>
+<p><img src="https://img-blog.csdnimg.cn/20200225111026371.png" alt="在这里插入图片描述"></p>
+<h2 id="producer"><a href="#producer" class="headerlink" title="producer"></a>producer</h2><p>我们已经创建了topic 。接下来我们可以让生产者推送消息到这个topic 上。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">bin/kafka-console-producer.sh --broker-list localhost:9092 --topic test1</span><br></pre></td></tr></table></figure>
+<p>–broker-list localhost:9092 连接上指定的kafka 服务器。<br><img src="https://img-blog.csdnimg.cn/2020022513250510.png" alt="在这里插入图片描述"></p>
+<h2 id="consumer"><a href="#consumer" class="headerlink" title="consumer"></a>consumer</h2><p>生产者生产了消息，接下来就需要消费者消费消息啦。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic test1 --from-beginning</span><br></pre></td></tr></table></figure>
+<p>–bootstrap-server localhost:9092  是连接特定的kafka 服务<br>–from-beginning 读取历史未消费的数据。<br><img src="https://img-blog.csdnimg.cn/20200225133001323.png" alt="在这里插入图片描述"></p>
+<h1 id="Springboot整合使用kafka"><a href="#Springboot整合使用kafka" class="headerlink" title="Springboot整合使用kafka"></a>Springboot整合使用kafka</h1><p>上面哪些都是在服务器上操作的，所以接下来我们需要在我们代码中使用kafka ,主要是推送消息和消费消息。</p>
+<p>这里由于我们kafka 部署在服务器上，不是我们本地，所以需要kafka 配置文件中设置远程访问。主要修改config&#x2F;server.properties</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">listeners=PLAINTEXT://:9092</span><br><span class="line">advertised.listeners=PLAINTEXT://192.168.1.51:9092</span><br><span class="line">zookeeper.connect=192.168.1.51:2181</span><br></pre></td></tr></table></figure>
+<p><img src="https://img-blog.csdnimg.cn/20200225173945793.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzI3NzkwMDEx,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>做如上修改就可以在远程访问啦。</p>
+<h2 id="produecer"><a href="#produecer" class="headerlink" title="produecer"></a>produecer</h2><p>准备工作做好了，我们现在创建一个springboot 项目 ，名为kafka-producer，作为kafka 生产者。我这里Springboot 版本是最新的2.2.4。<br>在pom.xml 文件中引入kafka 依赖。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&lt;!--引入Kafka--&gt;</span><br><span class="line">        &lt;dependency&gt;</span><br><span class="line">            &lt;groupId&gt;org.springframework.kafka&lt;/groupId&gt;</span><br><span class="line">            &lt;artifactId&gt;spring-kafka&lt;/artifactId&gt;</span><br><span class="line">        &lt;/dependency&gt;</span><br></pre></td></tr></table></figure>
+<p>在配置文件中，配置kafka 连接</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">server.port=9000</span><br><span class="line">spring.kafka.bootstrap-servers=192.168.1.51:9092</span><br></pre></td></tr></table></figure>
+<p>然后我们创建一个推动消息的接口。KafkaProducerController<br>内容如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">@RestController</span><br><span class="line">public class KafkaProducerController &#123;</span><br><span class="line">    @Resource</span><br><span class="line">    private KafkaTemplate&lt;String,String&gt; KafkaTemplate;</span><br><span class="line"></span><br><span class="line">    @RequestMapping(&quot;/send&quot;)</span><br><span class="line">    public String sendMsg(@RequestParam(value = &quot;topic&quot;)String topic,@RequestParam(value = &quot;msg&quot;)String msg)&#123;</span><br><span class="line">        KafkaTemplate.send(topic,msg);</span><br><span class="line">        return &quot;success&quot;;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>主要是通过KafkaTemplate 向topic 推送消息的。这样就可以了，我们启动项目，调接口</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://localhost:9000/send?topic=test3&amp;msg=hello world</span><br></pre></td></tr></table></figure>
+<p><img src="https://img-blog.csdnimg.cn/2020022517592263.png" alt="在这里插入图片描述"><br>控制台可以看到连接kafka 的信息。<br><img src="https://img-blog.csdnimg.cn/20200225180004487.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzI3NzkwMDEx,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>并可以看到推送的是时间和commitID<br><img src="https://img-blog.csdnimg.cn/20200225180038546.png" alt="在这里插入图片描述"></p>
+<h2 id="consumer-1"><a href="#consumer-1" class="headerlink" title="consumer"></a>consumer</h2><p>接下来我们就需要创建一个kafka 消费者来监控topic ，如果有新的消息就接收。<br>pom.xml 文件和配置文件连接kafka 服务器都是一样的。<br>我们创建一个类KafkaConsumer。<br>内容如下</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">@Component</span><br><span class="line">@Slf4j</span><br><span class="line">public class KafkaConsumer &#123;</span><br><span class="line">    @KafkaListener(groupId = &quot;test-group&quot;,topics = &quot;test3&quot;)</span><br><span class="line">    public void listen(String msg)&#123;</span><br><span class="line">        log.info(&quot;接收消息：&quot;+msg);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>可以看到主要是使用KafkaListener的注解，groupId 随意写。topics 是我们需要监听的topic。至于listen方法的参数，看我们推送的是什么类型，就接收什么类型。<br>好了，我们启动消费者进行监听。<br><img src="https://img-blog.csdnimg.cn/20200225180717810.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzI3NzkwMDEx,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>可以看到可以接收生产者推送的消息了。</p>
+<p>这些都是比较简单的使用，我们后续接着学习kafka的内容吧，一起加油！</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/java/" rel="tag"># java</a>
+              <a href="/tags/springCloud/" rel="tag"># springCloud</a>
+              <a href="/tags/kafka/" rel="tag"># kafka</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2022/02/25/centOS7%20%E5%AE%89%E8%A3%85nginx/" rel="prev" title="centOS7 安装nginx">
+                  <i class="fa fa-chevron-left"></i> centOS7 安装nginx
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2022/02/25/UE%E6%BF%80%E6%B4%BB%EF%BC%88%E4%BA%B2%E6%B5%8B%E6%9C%89%E6%95%88%EF%BC%8C%E9%80%9A%E8%BF%87%E6%B3%A8%E5%86%8C%E6%9C%BA%E6%BF%80%E6%B4%BB%EF%BC%89/" rel="next" title="UE激活（亲测有效，通过注册机激活）">
+                  UE激活（亲测有效，通过注册机激活） <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">John Doe</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

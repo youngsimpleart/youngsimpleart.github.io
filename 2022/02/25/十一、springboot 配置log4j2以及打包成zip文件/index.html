@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.0.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.10.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
+
+  <meta name="description" content="前言其实我们前面已经配置了日志，但是最近总感觉日志日志格式看的不舒服，并且每次打包都是一个jar 文件，lib都包含在jar 中，每次做很小的修改都需要重新替换jar文件，jar文件会比较大，传输起来比较慢。所以做一些改进。 配置log4j2好了，废话不多说了，先来在Springboot中配置log4j2吧。 pom.xmlspringboot 项目默认的是使用logback 的，所以我们想要使用">
+<meta property="og:type" content="website">
+<meta property="og:title" content="十一、springboot 配置log4j2以及打包成zip文件">
+<meta property="og:url" content="http://example.com/2022/02/25/%E5%8D%81%E4%B8%80%E3%80%81springboot%20%E9%85%8D%E7%BD%AElog4j2%E4%BB%A5%E5%8F%8A%E6%89%93%E5%8C%85%E6%88%90zip%E6%96%87%E4%BB%B6/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="前言其实我们前面已经配置了日志，但是最近总感觉日志日志格式看的不舒服，并且每次打包都是一个jar 文件，lib都包含在jar 中，每次做很小的修改都需要重新替换jar文件，jar文件会比较大，传输起来比较慢。所以做一些改进。 配置log4j2好了，废话不多说了，先来在Springboot中配置log4j2吧。 pom.xmlspringboot 项目默认的是使用logback 的，所以我们想要使用">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20191211180329352.jpeg?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9xdWVsbGFuYW4uYmxvZy5jc2RuLm5ldA==,size_16,color_FFFFFF,t_70">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20191211180332624.jpeg?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9xdWVsbGFuYW4uYmxvZy5jc2RuLm5ldA==,size_16,color_FFFFFF,t_70">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20191211180332944.jpeg?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9xdWVsbGFuYW4uYmxvZy5jc2RuLm5ldA==,size_16,color_FFFFFF,t_70">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20191211180333332.jpeg?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9xdWVsbGFuYW4uYmxvZy5jc2RuLm5ldA==,size_16,color_FFFFFF,t_70">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20191015213334732.jpeg?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzI3NzkwMDEx,size_16,color_FFFFFF,t_70">
+<meta property="article:published_time" content="2022-02-25T12:54:08.635Z">
+<meta property="article:modified_time" content="2022-02-25T07:14:51.851Z">
+<meta property="article:author" content="John Doe">
+<meta property="article:tag" content="springboot">
+<meta property="article:tag" content="java">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://img-blog.csdnimg.cn/20191211180329352.jpeg?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9xdWVsbGFuYW4uYmxvZy5jc2RuLm5ldA==,size_16,color_FFFFFF,t_70">
+
+
+<link rel="canonical" href="http://example.com/2022/02/25/%E5%8D%81%E4%B8%80%E3%80%81springboot%20%E9%85%8D%E7%BD%AElog4j2%E4%BB%A5%E5%8F%8A%E6%89%93%E5%8C%85%E6%88%90zip%E6%96%87%E4%BB%B6/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"http://example.com/2022/02/25/%E5%8D%81%E4%B8%80%E3%80%81springboot%20%E9%85%8D%E7%BD%AElog4j2%E4%BB%A5%E5%8F%8A%E6%89%93%E5%8C%85%E6%88%90zip%E6%96%87%E4%BB%B6/","path":"2022/02/25/十一、springboot 配置log4j2以及打包成zip文件/","title":"十一、springboot 配置log4j2以及打包成zip文件"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>十一、springboot 配置log4j2以及打包成zip文件 | Hexo</title>
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Hexo</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%89%8D%E8%A8%80"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%85%8D%E7%BD%AElog4j2"><span class="nav-number">2.</span> <span class="nav-text">配置log4j2</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#pom-xml"><span class="nav-number">2.1.</span> <span class="nav-text">pom.xml</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BC%96%E5%86%99log4j2-xml"><span class="nav-number">2.2.</span> <span class="nav-text">编写log4j2.xml</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#application-properties-%E9%85%8D%E7%BD%AE"><span class="nav-number">2.3.</span> <span class="nav-text">application.properties 配置</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%89%93%E5%8C%85%E5%A4%96%E7%BD%AE%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6"><span class="nav-number">3.</span> <span class="nav-text">打包外置配置文件</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#pom-xml-%E4%BF%AE%E6%94%B9"><span class="nav-number">3.1.</span> <span class="nav-text">pom.xml 修改</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#package-xml"><span class="nav-number">3.2.</span> <span class="nav-text">package.xml</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%B5%8B%E8%AF%95"><span class="nav-number">4.</span> <span class="nav-text">测试</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%95%AA%E5%A4%96"><span class="nav-number">5.</span> <span class="nav-text">番外</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">John Doe</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">54</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+        <span class="site-state-item-count">13</span>
+        <span class="site-state-item-name">categories</span>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">35</span>
+        <span class="site-state-item-name">tags</span>
+      </div>
+  </nav>
+</div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2022/02/25/%E5%8D%81%E4%B8%80%E3%80%81springboot%20%E9%85%8D%E7%BD%AElog4j2%E4%BB%A5%E5%8F%8A%E6%89%93%E5%8C%85%E6%88%90zip%E6%96%87%E4%BB%B6/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="John Doe">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          十一、springboot 配置log4j2以及打包成zip文件
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+      
+
+      <time title="Created: 2022-02-25 20:54:08 / Modified: 15:14:51" itemprop="dateCreated datePublished" datetime="2022-02-25T20:54:08+08:00">2022-02-25</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/springBoot/" itemprop="url" rel="index"><span itemprop="name">springBoot</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>其实我们前面已经配置了日志，但是最近总感觉日志日志格式看的不舒服，并且每次打包都是一个jar 文件，lib都包含在jar 中，每次做很小的修改都需要重新替换jar文件，jar文件会比较大，传输起来比较慢。所以做一些改进。</p>
+<h1 id="配置log4j2"><a href="#配置log4j2" class="headerlink" title="配置log4j2"></a>配置log4j2</h1><p>好了，废话不多说了，先来在Springboot中配置log4j2吧。</p>
+<h2 id="pom-xml"><a href="#pom-xml" class="headerlink" title="pom.xml"></a>pom.xml</h2><p>springboot 项目默认的是使用logback 的，所以我们想要使用log4j ，需要将原来的logback 框架屏蔽掉，再引入log4j.<br>首先我们在pom.xml 文件中加入</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">&lt;dependency&gt;</span><br><span class="line">           &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;</span><br><span class="line">           &lt;artifactId&gt;spring-boot-starter-web&lt;/artifactId&gt;</span><br><span class="line">           &lt;exclusions&gt;&lt;!-- 去掉默认配置 --&gt;</span><br><span class="line">               &lt;exclusion&gt;</span><br><span class="line">                   &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;</span><br><span class="line">                   &lt;artifactId&gt;spring-boot-starter-logging&lt;/artifactId&gt;</span><br><span class="line">               &lt;/exclusion&gt;</span><br><span class="line">           &lt;/exclusions&gt;</span><br><span class="line">       &lt;/dependency&gt;</span><br><span class="line"></span><br><span class="line">       &lt;dependency&gt;</span><br><span class="line">           &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;</span><br><span class="line">           &lt;artifactId&gt;spring-boot-starter-log4j2&lt;/artifactId&gt;</span><br><span class="line">       &lt;/dependency&gt;</span><br></pre></td></tr></table></figure>
+
+<h2 id="编写log4j2-xml"><a href="#编写log4j2-xml" class="headerlink" title="编写log4j2.xml"></a>编写log4j2.xml</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br></pre></td><td class="code"><pre><span class="line">&lt;Configuration status=&quot;WARN&quot; monitorInterval=&quot;300&quot; packages=&quot;cn.mastercom.cat&quot;&gt;</span><br><span class="line">    &lt;properties&gt;</span><br><span class="line">        &lt;property name=&quot;MtnoWebRoot&quot; &gt;$&#123;sys:user.dir&#125;/logs&lt;/property&gt;</span><br><span class="line">        &lt;property name=&quot;INFO_FILE&quot;&gt;zlflovemm_log&lt;/property&gt;</span><br><span class="line">        &lt;property name=&quot;ERROR_FILE&quot;&gt;zlflovemm__error&lt;/property&gt;</span><br><span class="line">    &lt;/properties&gt;</span><br><span class="line">    &lt;Appenders&gt;</span><br><span class="line">        &lt;Console name=&quot;Console&quot; target=&quot;SYSTEM_OUT&quot;&gt;</span><br><span class="line">            &lt;ThresholdFilter level=&quot;ALL&quot; onMatch=&quot;ACCEPT&quot; onMismatch=&quot;DENY&quot;/&gt;</span><br><span class="line">            &lt;PatternLayout pattern=&quot;%d&#123;HH:mm:ss.SSS&#125; [%t] %-5level %logger&#123;36&#125; - %msg%n&quot; /&gt;</span><br><span class="line">        &lt;/Console&gt;</span><br><span class="line"></span><br><span class="line">        &lt;RollingRandomAccessFile name=&quot;infolog&quot;</span><br><span class="line">                                 fileName=&quot;$&#123;MtnoWebRoot&#125;/$&#123;INFO_FILE&#125;.log&quot;</span><br><span class="line">                                 filePattern=&quot;$&#123;MtnoWebRoot&#125;/$&#123;INFO_FILE&#125;-%d&#123;yyyy-MM-dd&#125;-%i.log&quot;&gt;</span><br><span class="line">            &lt;PatternLayout</span><br><span class="line">                    pattern=&quot;%d&#123;yyyy-MM-dd HH:mm:ss.SSS&#125; [%t] [%X&#123;sessionID&#125;] [%X&#123;imei&#125;] %-5level %logger&#123;36&#125; - %msg%n&quot; /&gt;</span><br><span class="line">            &lt;!--  --&gt;</span><br><span class="line">            &lt;Policies&gt;</span><br><span class="line">                &lt;TimeBasedTriggeringPolicy interval=&quot;1&quot; modulate=&quot;true&quot; /&gt;</span><br><span class="line">                &lt;SizeBasedTriggeringPolicy size=&quot;2MB&quot; /&gt;</span><br><span class="line">            &lt;/Policies&gt;</span><br><span class="line">            &lt;DefaultRolloverStrategy max=&quot;1000&quot;&gt;</span><br><span class="line">                &lt;Delete basePath=&quot;$&#123;MtnoWebRoot&#125;&quot; maxDepth=&quot;1&quot;&gt;</span><br><span class="line">                    &lt;IfFileName glob=&quot;$&#123;INFO_FILE&#125;*.log&quot; /&gt;</span><br><span class="line">                    &lt;IfLastModified age=&quot;30d&quot; /&gt;</span><br><span class="line">                &lt;/Delete&gt;</span><br><span class="line">            &lt;/DefaultRolloverStrategy&gt;</span><br><span class="line">        &lt;/RollingRandomAccessFile&gt;</span><br><span class="line"></span><br><span class="line">        &lt;RollingRandomAccessFile name=&quot;errorlog&quot;</span><br><span class="line">                                 fileName=&quot;$&#123;MtnoWebRoot&#125;/$&#123;ERROR_FILE&#125;.log&quot;</span><br><span class="line">                                 filePattern=&quot;$&#123;MtnoWebRoot&#125;/$&#123;ERROR_FILE&#125;-%d&#123;yyyy-MM-dd&#125;-%i.log&quot;&gt;</span><br><span class="line">            &lt;PatternLayout</span><br><span class="line">                    pattern=&quot;%d&#123;yyyy-MM-dd HH:mm:ss.SSS&#125; [%t] %-5level %logger&#123;36&#125; - %msg%n&quot; /&gt;</span><br><span class="line">            &lt;Policies&gt;</span><br><span class="line">                &lt;TimeBasedTriggeringPolicy interval=&quot;1&quot; modulate=&quot;true&quot; /&gt;</span><br><span class="line">                &lt;SizeBasedTriggeringPolicy size=&quot;200MB&quot; /&gt;</span><br><span class="line">            &lt;/Policies&gt;</span><br><span class="line">            &lt;DefaultRolloverStrategy max=&quot;1000&quot;&gt;</span><br><span class="line">                &lt;Delete basePath=&quot;$&#123;MtnoWebRoot&#125;&quot; maxDepth=&quot;1&quot;&gt;</span><br><span class="line">                    &lt;IfFileName glob=&quot;$&#123;INFO_FILE&#125;*.log&quot; /&gt;</span><br><span class="line">                    &lt;IfLastModified age=&quot;30d&quot; /&gt;</span><br><span class="line">                &lt;/Delete&gt;</span><br><span class="line">            &lt;/DefaultRolloverStrategy&gt;</span><br><span class="line">        &lt;/RollingRandomAccessFile&gt;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">        &lt;Async name=&quot;Async&quot;&gt;</span><br><span class="line">            &lt;AppenderRef ref=&quot;infolog&quot;/&gt;</span><br><span class="line">            &lt;AppenderRef ref=&quot;errorlog&quot;/&gt;</span><br><span class="line">        &lt;/Async&gt;</span><br><span class="line">    &lt;/Appenders&gt;</span><br><span class="line"></span><br><span class="line">    &lt;Loggers&gt;</span><br><span class="line"></span><br><span class="line">        &lt;asyncRoot level=&quot;INFO&quot;&gt;</span><br><span class="line">            &lt;AppenderRef ref=&quot;infolog&quot;/&gt;</span><br><span class="line">            &lt;AppenderRef ref=&quot;errorlog&quot; level=&quot;error&quot;/&gt;</span><br><span class="line">            &lt;AppenderRef ref=&quot;Console&quot; /&gt;</span><br><span class="line">        &lt;/asyncRoot&gt;</span><br><span class="line">    &lt;/Loggers&gt;</span><br><span class="line">&lt;/Configuration&gt;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>上面配置的是生成日志的格式，大家可以自行修改。以及配置了单个日志文件最大为200M ,只保留最近30天的文件。</p>
+<h2 id="application-properties-配置"><a href="#application-properties-配置" class="headerlink" title="application.properties 配置"></a>application.properties 配置</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">#日志配置</span><br><span class="line">logging.config=classpath:log4j2.xml</span><br><span class="line">debug=false</span><br></pre></td></tr></table></figure>
+
+
+<p>实现上面这三步，就轻松的在项目中使用log4j日志啦。</p>
+<h1 id="打包外置配置文件"><a href="#打包外置配置文件" class="headerlink" title="打包外置配置文件"></a>打包外置配置文件</h1><p>上面配置的日志，先不测试了，等这个打包的配置也配置好了，再来一起测试。</p>
+<p>如果我们直接使用自带的mvn package 的话，会将我们依赖的jar 包已经配置文件统统打包成可运行的jar 文件。这样虽然方便，但是这样的话每次都需要重新打包，并且传输起来比较麻烦，所以我们就需要将lib 和配置文件从jar 文件中分离。这样项目修改了，只需要替换一下比较小的部分就可以了。</p>
+<h2 id="pom-xml-修改"><a href="#pom-xml-修改" class="headerlink" title="pom.xml 修改"></a>pom.xml 修改</h2><p>打开我们的pom.xml 文件,最下面我们的<build></build>中我们加入如下代码。因为我们的项目之前加入了打包成docker 镜像，所以整个的都贴出来，不需要打包成docker的可以去掉。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br></pre></td><td class="code"><pre><span class="line">&lt;build&gt;</span><br><span class="line">       &lt;!--打包后的项目名称--&gt;</span><br><span class="line">       &lt;resources&gt;</span><br><span class="line">           &lt;resource&gt;</span><br><span class="line">               &lt;directory&gt;src/main/resources&lt;/directory&gt;</span><br><span class="line">               &lt;targetPath&gt;$&#123;project.build.directory&#125;$&#123;file.separator&#125;classes&lt;/targetPath&gt;</span><br><span class="line">           &lt;/resource&gt;</span><br><span class="line">           &lt;resource&gt;</span><br><span class="line">               &lt;directory&gt;src/main/java&lt;/directory&gt;</span><br><span class="line">               &lt;includes&gt;</span><br><span class="line">                   &lt;!--这里必须包含.xml否则Mybatis的xml无法打包--&gt;</span><br><span class="line">                   &lt;include&gt;**/*.xml&lt;/include&gt;</span><br><span class="line">               &lt;/includes&gt;</span><br><span class="line">               &lt;filtering&gt;true&lt;/filtering&gt;</span><br><span class="line">           &lt;/resource&gt;</span><br><span class="line">       &lt;/resources&gt;</span><br><span class="line"></span><br><span class="line">       &lt;plugins&gt;</span><br><span class="line">           &lt;!--java编译插件--&gt;</span><br><span class="line">           &lt;plugin&gt;</span><br><span class="line">               &lt;groupId&gt;org.apache.maven.plugins&lt;/groupId&gt;</span><br><span class="line">               &lt;artifactId&gt;maven-compiler-plugin&lt;/artifactId&gt;</span><br><span class="line">               &lt;configuration&gt;</span><br><span class="line">                   &lt;source&gt;1.8&lt;/source&gt;</span><br><span class="line">                   &lt;target&gt;1.8&lt;/target&gt;</span><br><span class="line">                   &lt;encoding&gt;UTF-8&lt;/encoding&gt;</span><br><span class="line">                   &lt;fork&gt;true&lt;/fork&gt;</span><br><span class="line">               &lt;/configuration&gt;</span><br><span class="line">           &lt;/plugin&gt;</span><br><span class="line">           &lt;!--打jar包的插件--&gt;</span><br><span class="line">           &lt;plugin&gt;</span><br><span class="line">               &lt;groupId&gt;org.apache.maven.plugins&lt;/groupId&gt;</span><br><span class="line">               &lt;artifactId&gt;maven-jar-plugin&lt;/artifactId&gt;</span><br><span class="line">               &lt;configuration&gt;</span><br><span class="line">                   &lt;archive&gt;</span><br><span class="line">                       &lt;manifest&gt;</span><br><span class="line">                           &lt;addClasspath&gt;true&lt;/addClasspath&gt;</span><br><span class="line">                           &lt;classpathPrefix&gt;lib&lt;/classpathPrefix&gt;</span><br><span class="line">                           &lt;!--程序启动入口--&gt;</span><br><span class="line">                           &lt;mainClass&gt;com.quellan.zlflovemm.ZlflovemmApplication&lt;/mainClass&gt;</span><br><span class="line">                       &lt;/manifest&gt;</span><br><span class="line">                       &lt;manifestEntries&gt;</span><br><span class="line">                           &lt;Class-Path&gt;./&lt;/Class-Path&gt;</span><br><span class="line">                       &lt;/manifestEntries&gt;</span><br><span class="line">                   &lt;/archive&gt;</span><br><span class="line">                   &lt;excludes&gt;</span><br><span class="line">                       &lt;exclude&gt;config/**&lt;/exclude&gt;</span><br><span class="line">                   &lt;/excludes&gt;</span><br><span class="line">               &lt;/configuration&gt;</span><br><span class="line">           &lt;/plugin&gt;</span><br><span class="line">           &lt;plugin&gt;</span><br><span class="line">               &lt;artifactId&gt;maven-assembly-plugin&lt;/artifactId&gt;</span><br><span class="line">               &lt;configuration&gt;</span><br><span class="line">                   &lt;!--not append assembly id in release file name--&gt;</span><br><span class="line">                   &lt;appendAssemblyId&gt;false&lt;/appendAssemblyId&gt;</span><br><span class="line">                   &lt;descriptors&gt;</span><br><span class="line">                       &lt;!--注意这里的路径--&gt;</span><br><span class="line">                       &lt;descriptor&gt;src/main/build/package.xml&lt;/descriptor&gt;</span><br><span class="line">                   &lt;/descriptors&gt;</span><br><span class="line">               &lt;/configuration&gt;</span><br><span class="line">               &lt;executions&gt;</span><br><span class="line">                   &lt;execution&gt;</span><br><span class="line">                       &lt;id&gt;make-assembly&lt;/id&gt;</span><br><span class="line">                       &lt;phase&gt;package&lt;/phase&gt;</span><br><span class="line">                       &lt;goals&gt;</span><br><span class="line">                           &lt;goal&gt;single&lt;/goal&gt;</span><br><span class="line">                       &lt;/goals&gt;</span><br><span class="line">                   &lt;/execution&gt;</span><br><span class="line">               &lt;/executions&gt;</span><br><span class="line">           &lt;/plugin&gt;</span><br><span class="line"></span><br><span class="line">           &lt;!-- Docker --&gt;</span><br><span class="line">           &lt;plugin&gt;</span><br><span class="line">               &lt;groupId&gt;com.spotify&lt;/groupId&gt;</span><br><span class="line">               &lt;artifactId&gt;docker-maven-plugin&lt;/artifactId&gt;</span><br><span class="line">               &lt;version&gt;1.0.0&lt;/version&gt;</span><br><span class="line">               &lt;!-- 将插件绑定在某个phase执行 --&gt;</span><br><span class="line">               &lt;executions&gt;</span><br><span class="line">                   &lt;execution&gt;</span><br><span class="line">                       &lt;id&gt;build-image&lt;/id&gt;</span><br><span class="line">                       &lt;!-- 用户只需执行mvn package ，就会自动执行mvn docker:build --&gt;</span><br><span class="line">                       &lt;phase&gt;package&lt;/phase&gt;</span><br><span class="line">                       &lt;goals&gt;</span><br><span class="line">                           &lt;goal&gt;build&lt;/goal&gt;</span><br><span class="line">                       &lt;/goals&gt;</span><br><span class="line">                   &lt;/execution&gt;</span><br><span class="line">               &lt;/executions&gt;</span><br><span class="line">               &lt;configuration&gt;</span><br><span class="line">                   &lt;!-- 指定生成的镜像名 --&gt;</span><br><span class="line">                   &lt;imageName&gt;$&#123;docker.image.prefix&#125;/$&#123;project.artifactId&#125;:$&#123;project.version&#125;&lt;/imageName&gt;</span><br><span class="line">                   &lt;!-- 指定标签 --&gt;</span><br><span class="line">                   &lt;imageTags&gt;</span><br><span class="line">                       &lt;imageTag&gt;$&#123;project.version&#125;&lt;/imageTag&gt;</span><br><span class="line">                   &lt;/imageTags&gt;</span><br><span class="line">                   &lt;!-- 指定 Dockerfile 路径 --&gt;</span><br><span class="line">                   &lt;dockerDirectory&gt;src/main/docker&lt;/dockerDirectory&gt;</span><br><span class="line">                   &lt;!-- 指定远程 docker api地址 --&gt;</span><br><span class="line">                   &lt;dockerHost&gt;http://127.0.0.1:2375&lt;/dockerHost&gt;</span><br><span class="line">                   &lt;resources&gt;</span><br><span class="line">                       &lt;resource&gt;</span><br><span class="line">                           &lt;targetPath&gt;/&lt;/targetPath&gt;</span><br><span class="line">                           &lt;!-- jar包所在的路径此处配置的对应target目录 --&gt;</span><br><span class="line">                           &lt;directory&gt;$&#123;project.build.directory&#125;&lt;/directory&gt;</span><br><span class="line">                           &lt;!-- 需要包含的jar包,这里对应的是Dockerfile中添加的文件名　--&gt;</span><br><span class="line">                           &lt;include&gt;$&#123;project.build.finalName&#125;.jar&lt;/include&gt;</span><br><span class="line">                       &lt;/resource&gt;</span><br><span class="line">                   &lt;/resources&gt;</span><br><span class="line">               &lt;/configuration&gt;</span><br><span class="line">           &lt;/plugin&gt;</span><br><span class="line">       &lt;/plugins&gt;</span><br><span class="line">   &lt;/build&gt;</span><br></pre></td></tr></table></figure>
+<p>需要注意的是，如下两个地方，第一个di地方需要需改成我们自己项目的启动类。第二个地方需要配置我们的package.xml 文件路径。内容我们待会讲。</p>
+<p><img src="https://img-blog.csdnimg.cn/20191211180329352.jpeg?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9xdWVsbGFuYW4uYmxvZy5jc2RuLm5ldA==,size_16,color_FFFFFF,t_70" alt="file"></p>
+<h2 id="package-xml"><a href="#package-xml" class="headerlink" title="package.xml"></a>package.xml</h2><p>我们在pom.xml 中配置好了后，我们在src&#x2F;main 目录下创建一个build 包，早build 目录下创建package.xml 文件。路径就是上面配置的，大家可以按照自己的喜好来。<br>内容如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;  </span><br><span class="line">&lt;assembly xmlns=&quot;http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.3&quot; xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;  </span><br><span class="line">  xsi:schemaLocation=&quot;http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.3 http://maven.apache.org/xsd/assembly-1.1.3.xsd&quot;&gt;  </span><br><span class="line">    &lt;id&gt;package&lt;/id&gt;  </span><br><span class="line">    &lt;formats&gt;  </span><br><span class="line">        &lt;format&gt;zip&lt;/format&gt;</span><br><span class="line">    &lt;/formats&gt;  </span><br><span class="line">    &lt;!-- 改为false不会出现两层相同的目录 --&gt;</span><br><span class="line">    &lt;includeBaseDirectory&gt;false&lt;/includeBaseDirectory&gt;  </span><br><span class="line">    &lt;fileSets&gt;  </span><br><span class="line">        &lt;fileSet&gt;</span><br><span class="line">            &lt;directory&gt;bin&lt;/directory&gt;</span><br><span class="line">            &lt;outputDirectory&gt;$&#123;file.separator&#125;&lt;/outputDirectory&gt;  </span><br><span class="line">        &lt;/fileSet&gt;  </span><br><span class="line">        &lt;fileSet&gt;  </span><br><span class="line">            &lt;directory&gt;src/main/resources&lt;/directory&gt;  </span><br><span class="line">            &lt;outputDirectory&gt;$&#123;file.separator&#125;&lt;/outputDirectory&gt;  </span><br><span class="line">            &lt;excludes&gt;</span><br><span class="line">            	&lt;exclude&gt;static/**&lt;/exclude&gt;</span><br><span class="line">            	&lt;exclude&gt;templates/**&lt;/exclude&gt;</span><br><span class="line">            &lt;/excludes&gt;</span><br><span class="line">        &lt;/fileSet&gt;  </span><br><span class="line">        &lt;fileSet&gt;  </span><br><span class="line">            &lt;directory&gt;$&#123;project.build.directory&#125;&lt;/directory&gt;</span><br><span class="line">            &lt;outputDirectory&gt;$&#123;file.separator&#125;&lt;/outputDirectory&gt;</span><br><span class="line">            &lt;includes&gt;  </span><br><span class="line">                &lt;include&gt;*.jar&lt;/include&gt;  </span><br><span class="line">            &lt;/includes&gt;  </span><br><span class="line">        &lt;/fileSet&gt;  </span><br><span class="line">    &lt;/fileSets&gt;  </span><br><span class="line">    &lt;dependencySets&gt;  </span><br><span class="line">        &lt;dependencySet&gt;  </span><br><span class="line">    &lt;useProjectArtifact&gt;true&lt;/useProjectArtifact&gt;</span><br><span class="line">            &lt;outputDirectory&gt;lib&lt;/outputDirectory&gt;  </span><br><span class="line">            &lt;scope&gt;runtime&lt;/scope&gt;  </span><br><span class="line">            &lt;!--&lt;unpack&gt;false&lt;/unpack&gt; --&gt;</span><br><span class="line">            &lt;excludes&gt;  </span><br><span class="line">                &lt;!--&lt;exclude&gt;$&#123;project.name&#125;-$&#123;project.version&#125;&lt;/exclude&gt; --&gt;</span><br><span class="line">                &lt;exclude&gt;$&#123;groupId&#125;:$&#123;artifactId&#125;&lt;/exclude&gt;</span><br><span class="line">            &lt;/excludes&gt;  </span><br><span class="line">        &lt;/dependencySet&gt;  </span><br><span class="line">    &lt;/dependencySets&gt;  </span><br><span class="line">&lt;/assembly&gt;</span><br></pre></td></tr></table></figure>
+
+<h1 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h1><p>好啦，上面的已经配置好啦，我们来测试一下。<br>直接mvn package成功后会生成如下文件，包含jar 和zip 文件。</p>
+<p><img src="https://img-blog.csdnimg.cn/20191211180332624.jpeg?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9xdWVsbGFuYW4uYmxvZy5jc2RuLm5ldA==,size_16,color_FFFFFF,t_70" alt="file"><br>zip 文件解压后，就是我们第一次部署的文件，后面修改代码只用替换jar文件就可以了。</p>
+<p><img src="https://img-blog.csdnimg.cn/20191211180332944.jpeg?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9xdWVsbGFuYW4uYmxvZy5jc2RuLm5ldA==,size_16,color_FFFFFF,t_70" alt="file"></p>
+<p>我们生成的日志文件</p>
+<p><img src="https://img-blog.csdnimg.cn/20191211180333332.jpeg?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9xdWVsbGFuYW4uYmxvZy5jc2RuLm5ldA==,size_16,color_FFFFFF,t_70" alt="file"></p>
+<h1 id="番外"><a href="#番外" class="headerlink" title="番外"></a>番外</h1><p>好了，就说这么多啦<br>代码上传到github：<br><a target="_blank" rel="noopener" href="https://github.com/QuellanAn/zlflovemm">https://github.com/QuellanAn/zlflovemm</a></p>
+<p>后续加油♡</p>
+<p>欢迎大家关注个人公众号 “程序员爱酸奶”</p>
+<p>分享各种学习资料，包含java，linux，大数据等。资料包含视频文档以及源码，同时分享本人及投递的优质技术博文。</p>
+<p>如果大家喜欢记得关注和分享哟❤</p>
+<p><img src="https://img-blog.csdnimg.cn/20191015213334732.jpeg?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzI3NzkwMDEx,size_16,color_FFFFFF,t_70" alt="file"></p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/springboot/" rel="tag"># springboot</a>
+              <a href="/tags/java/" rel="tag"># java</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2022/02/25/%E5%8D%81%E4%B8%89%E3%80%81springboot%20%E4%BC%98%E9%9B%85%E9%9B%86%E6%88%90spring-boot-admin%20%E5%AE%9E%E7%8E%B0%E7%A8%8B%E5%BA%8F%E7%9B%91%E6%8E%A7/" rel="prev" title="十三、springboot 优雅集成spring-boot-admin 实现程序监控">
+                  <i class="fa fa-chevron-left"></i> 十三、springboot 优雅集成spring-boot-admin 实现程序监控
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2022/02/25/%E5%9B%9B%E3%80%81docker%20%E4%BB%93%E5%BA%93(%E8%AE%A9%E6%88%91%E4%BB%AC%E7%9A%84%E9%95%9C%E5%83%8F%E6%9C%89%E5%A4%84%E5%8F%AF%E5%AD%98)/" rel="next" title="四、docker 仓库(让我们的镜像有处可存)">
+                  四、docker 仓库(让我们的镜像有处可存) <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">John Doe</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>
